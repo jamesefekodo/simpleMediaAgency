@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Sign in | Rayda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink: #111111;
+            --ink-soft: #55555a;
+            --paper: #fafaf7;
+            --line: #dededa;
+            --dark: #0b0b0c;
+            --accent: #c6f24e;
+            --danger: #d92d20;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-shell {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            min-height: 100vh;
+        }
+
+        /* Background slider */
+        .auth-brand {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 44px 48px;
+            color: #fff;
+            background: var(--dark);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.06);
+            transition: opacity 1.4s ease, transform 7s linear;
+            will-change: opacity, transform;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(11, 11, 12, .30) 0%, rgba(11, 11, 12, .55) 48%, rgba(11, 11, 12, .92) 100%);
+        }
+
+        .brand-mark {
+            position: relative;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+            font-family: "Sora", sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 3;
+            max-width: 500px;
+        }
+
+        .brand-eyebrow {
+            margin: 0 0 14px;
+            font-size: 12px;
+            font-weight: 650;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .72);
+        }
+
+        .brand-title {
+            margin: 0 0 18px;
+            font-family: "Sora", sans-serif;
+            font-size: clamp(34px, 4vw, 58px);
+            line-height: 1.03;
+            letter-spacing: -.035em;
+        }
+
+        .brand-title span {
+            color: var(--accent);
+        }
+
+        .brand-text {
+            margin: 0;
+            max-width: 410px;
+            font-size: 16px;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, .78);
+        }
+
+        .slider-dots {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            gap: 8px;
+            margin-top: 28px;
+        }
+
+        .slider-dot {
+            width: 34px;
+            height: 4px;
+            border: 0;
+            padding: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .28);
+            cursor: pointer;
+            transition: background-color .25s ease;
+        }
+
+        .slider-dot.active {
+            background: var(--accent);
+        }
+
+        /* Form side */
+        .auth-panel {
+            display: grid;
+            align-content: center;
+            justify-items: center;
+            padding: 48px 32px;
+        }
+
+        .auth-card {
+            width: min(430px, 100%);
+        }
+
+        .auth-heading {
+            margin: 0 0 8px;
+            font-family: "Sora", sans-serif;
+            font-size: 32px;
+            line-height: 1.15;
+            letter-spacing: -.03em;
+        }
+
+        .auth-subtitle {
+            margin: 0 0 32px;
+            color: var(--ink-soft);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input {
+            width: 100%;
+            height: 54px;
+            padding: 0 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #fff;
+            color: var(--ink);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .input::placeholder {
+            color: #9a9a94;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--ink);
+            box-shadow: 0 0 0 4px rgba(198, 242, 78, .38);
+        }
+
+        .input-error {
+            border-color: var(--danger);
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            height: 36px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--ink-soft);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            color: var(--ink);
+        }
+
+        .form-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .remember {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--ink-soft);
+            cursor: pointer;
+        }
+
+        .remember input {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--ink);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--ink);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            height: 54px;
+            border: 0;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: transform .16s ease, background-color .16s ease, border-color .16s ease;
+        }
+
+        .btn-primary {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #000;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-google {
+            background: #fff;
+            color: var(--ink);
+            border: 1px solid var(--line);
+            text-decoration: none;
+        }
+
+        .btn-google:hover {
+            border-color: #b9b9b2;
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 0;
+            color: #8d8d87;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        .auth-error {
+            display: none;
+            margin: 0 0 22px;
+            padding: 13px 15px;
+            border: 1px solid rgba(217, 45, 32, .25);
+            border-radius: 12px;
+            background: rgba(217, 45, 32, .07);
+            color: #9f2018;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .auth-error.visible {
+            display: block;
+        }
+
+        .field-error {
+            display: none;
+            margin-top: 7px;
+            color: var(--danger);
+            font-size: 13px;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        .auth-footer {
+            margin: 26px 0 0;
+            text-align: center;
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+
+        .auth-footer a {
+            color: var(--ink);
+            font-weight: 650;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .legal {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #8d8d87;
+        }
+
+        .legal a {
+            color: inherit;
+        }
+
+        .spinner {
+            width: 17px;
+            height: 17px;
+            border: 2px solid rgba(255, 255, 255, .35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 940px) {
+            .auth-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-brand {
+                min-height: 300px;
+                padding: 26px;
+                justify-content: flex-end;
+            }
+
+            .brand-title {
+                font-size: 34px;
+            }
+
+            .brand-text {
+                display: none;
+            }
+
+            .auth-panel {
+                padding: 40px 22px 56px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slide {
+                transition: none;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<main class="auth-shell">
+    <aside class="auth-brand" id="authSlider">
+        <!-- Replace these Unsplash URLs with your own branded images later -->
+        <div
+            class="slide active"
+            style="background-image:url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1800&q=80');"
+            role="img"
+            aria-label="Creator filming with professional camera equipment"
+        ></div>
+
+        <div
+            class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1800&q=80');"
+            role="img"
+            aria-label="Content creator editing video on a computer"
+        ></div>
+
+        <div
+            class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1800&q=80');"
+            role="img"
+            aria-label="Media production studio with lighting equipment"
+        ></div>
+
+        <div
+            class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1800&q=80');"
+            role="img"
+            aria-label="Photographer holding a camera in a creative workspace"
+        ></div>
+
+        <div class="slide-overlay"></div>
+
+        <a class="brand-mark" href="{{ url('/') }}">
+            <span class="brand-dot"></span>
+            Rayda
+        </a>
+
+        <div class="brand-content">
+            <p class="brand-eyebrow">Rayda Creator Network</p>
+
+            <h1 class="brand-title">
+                Create. Publish. <span>Grow.</span>
+            </h1>
+
+            <p class="brand-text">
+                Sign in to manage your gadget orders, media services, event updates,
+                job opportunities, and creator community membership.
+            </p>
+
+            <div class="slider-dots" id="sliderDots">
+                <button class="slider-dot active" type="button" aria-label="Show slide 1"></button>
+                <button class="slider-dot" type="button" aria-label="Show slide 2"></button>
+                <button class="slider-dot" type="button" aria-label="Show slide 3"></button>
+                <button class="slider-dot" type="button" aria-label="Show slide 4"></button>
+            </div>
+        </div>
+    </aside>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <h2 class="auth-heading">Welcome back</h2>
+            <p class="auth-subtitle">
+                Sign in to continue with Rayda.
+            </p>
+
+            @if ($errors->any())
+                <div class="auth-error visible" role="alert" aria-live="polite">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            <form class="form" id="loginForm" method="POST"
+            {{-- action="{{ route('login') }}" --}}
+            >
+                @csrf
+
+                <div class="field">
+                    <label for="email">Email address</label>
+
+                    <input
+                        class="input @error('email') input-error @enderror"
+                        id="email"
+                        name="email"
+                        type="email"
+                        value="{{ old('email') }}"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                    @error('email')
+                        <p class="field-error visible">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+
+                    <div class="input-wrap">
+                        <input
+                            class="input @error('password') input-error @enderror"
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            class="password-toggle"
+                            type="button"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+                    </div>
+
+                    @error('password')
+                        <p class="field-error visible">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="form-meta">
+                    <label class="remember">
+                        <input type="checkbox" name="remember" value="1">
+                        Remember me
+                    </label>
+
+                    <a class="forgot-link"
+                    {{-- href="{{ route('password.request') }}" --}}
+                    >
+                        Forgot password?
+                    </a>
+                </div>
+
+                <button class="btn btn-primary" id="submitButton" type="submit">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span class="button-label">Sign in</span>
+                </button>
+
+                <div class="divider">or continue with</div>
+
+                <a class="btn btn-google" href="{{ url('/auth/google/redirect') }}">
+                    Continue with Google
+                </a>
+
+                <p class="auth-footer">
+                    New to Rayda?
+                    <a
+                    {{-- href="{{ route('register') }}" --}}
+                    >Create an account</a>
+                </p>
+            </form>
+
+            <p class="legal">
+                By continuing, you agree to Rayda’s
+                <a href="{{ url('/terms') }}">Terms</a>
+                and
+                <a href="{{ url('/privacy') }}">Privacy Policy</a>.
+            </p>
+        </div>
+    </section>
+</main>
+
+<script>
+    const slides = document.querySelectorAll('#authSlider .slide');
+    const dots = document.querySelectorAll('#sliderDots .slider-dot');
+    const slideDuration = 6000;
+    let currentIndex = 0;
+    let sliderTimer;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+
+        currentIndex = index;
+    }
+
+    function nextSlide() {
+        showSlide((currentIndex + 1) % slides.length);
+    }
+
+    function startSlider() {
+        clearInterval(sliderTimer);
+        sliderTimer = setInterval(nextSlide, slideDuration);
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+            startSlider();
+        });
+    });
+
+    startSlider();
+
+    const passwordInput = document.getElementById('password');
+    const toggleButton = document.getElementById('togglePassword');
+    const loginForm = document.getElementById('loginForm');
+    const submitButton = document.getElementById('submitButton');
+    const buttonLabel = submitButton.querySelector('.button-label');
+
+    toggleButton.addEventListener('click', () => {
+        const isVisible = passwordInput.type === 'text';
+
+        passwordInput.type = isVisible ? 'password' : 'text';
+        toggleButton.textContent = isVisible ? 'Show' : 'Hide';
+        toggleButton.setAttribute(
+            'aria-label',
+            isVisible ? 'Show password' : 'Hide password'
+        );
+    });
+
+    loginForm.addEventListener('submit', () => {
+        submitButton.disabled = true;
+        submitButton.classList.add('loading');
+        buttonLabel.textContent = 'Signing in…';
+    });
+</script>
+
+</body>
+</html>
