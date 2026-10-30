@@ -84,7 +84,7 @@ class User extends Authenticatable
     // static functions
     static public function getEmailCheck($email)
     {
-        return User::where('email', '=', $email)->first();
+        return User::where('email_1', '=', $email)->first();
     }
     static public function getTokenSingle($remember_token)
     {

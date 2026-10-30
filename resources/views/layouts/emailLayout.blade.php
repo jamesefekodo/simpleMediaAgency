@@ -8,7 +8,7 @@
         <br>
 
         <p style="margin: 0">Warm regards,</p>
-        <p style="margin: 0">{{ basicSystemInfo()->association_acronym ?? config('app.name') }}.</p>
+        <p style="margin: 0">{{ basicSystemInfo()->app_name ?? config('app.name') }}.</p>
     </div>
 </div>
 

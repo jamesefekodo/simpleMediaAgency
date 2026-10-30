@@ -1,5 +1,5 @@
 @extends('layouts.authLayout')
-@section('title', 'Register')
+@section('title', 'Create your account')
 @section('content')
 
     <section class="auth-panel">
@@ -70,14 +70,16 @@
 
 
                 <div class="form-meta">
-                    <a class="forgot-link" {{-- href="{{ route('password.request') }}" --}}>
+                    <a class="forgot-link"
+                    href="{{ route('forgotPassword') }}"
+                    >
                         Forgot password?
                     </a>
                 </div>
 
                 <button class="btn btn-primary" id="submitButton" type="submit">
                     <span class="spinner" aria-hidden="true"></span>
-                    <span class="button-label">Sign in</span>
+                    <span class="button-label">Submit</span>
                 </button>
 
                 <div class="divider">or continue with</div>
@@ -90,7 +92,7 @@
                 <p class="auth-footer">
                     <span class="">
                         Already have an account?
-                        <a href="{{ route('registrationPage') }}">Log in</a>
+                        <a href="{{ route('loginPage') }}">Log in</a>
                     </span>
                 </p>
 

@@ -8,8 +8,6 @@
     <link rel="icon" type="image/x-icon" href="{{ logo() }}">
 
 
-    <title>Sign in | {{ config('app.name') }}</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -177,6 +175,81 @@
             submitButton.disabled = true;
             submitButton.classList.add('loading');
             buttonLabel.textContent = 'Signing in…';
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('password_confirmation');
+
+            const rules = {
+                length: document.getElementById('length-rule'),
+                lowercase: document.getElementById('lowercase-rule'),
+                uppercase: document.getElementById('uppercase-rule'),
+                number: document.getElementById('number-rule'),
+                special: document.getElementById('special-char-rule'),
+                match: document.getElementById('match-rule')
+            };
+
+            function setRule(element, isValid) {
+                if (!element) return;
+
+                element.classList.toggle('valid', isValid);
+                element.classList.toggle('invalid', !isValid);
+
+                const icon = element.querySelector('.rule-icon');
+
+                if (icon) {
+                    icon.classList.toggle('fa-circle-check', isValid);
+                    icon.classList.toggle('fa-circle-xmark', !isValid);
+                }
+            }
+
+            function validatePassword() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmInput.value;
+
+                setRule(rules.length, password.length >= 8);
+                setRule(rules.lowercase, /[a-z]/.test(password));
+                setRule(rules.uppercase, /[A-Z]/.test(password));
+                setRule(rules.number, /\d/.test(password));
+                setRule(rules.special, /[^A-Za-z0-9]/.test(password));
+                setRule(rules.match, password.length > 0 && password === confirmPassword);
+            }
+
+            if (passwordInput && confirmInput) {
+                passwordInput.addEventListener('input', validatePassword);
+                confirmInput.addEventListener('input', validatePassword);
+
+                validatePassword();
+            }
+
+
+
+            // ###########################################
+            const registrationForm = document.getElementById('registrationForm');
+
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', function(event) {
+                    const password = passwordInput.value;
+                    const confirmPassword = confirmInput.value;
+
+                    const isValid =
+                        password.length >= 8 &&
+                        /[a-z]/.test(password) &&
+                        /[A-Z]/.test(password) &&
+                        /\d/.test(password) &&
+                        /[^A-Za-z0-9]/.test(password) &&
+                        password === confirmPassword;
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        validatePassword();
+                        passwordInput.focus();
+                    }
+                });
+            }
         });
     </script>
 

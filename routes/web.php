@@ -17,11 +17,11 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
     Route::post('register/submit', [AuthController::class, 'submitUserRegistrationRequest'])->name('submitUserRegistrationRequest');
 
 
-    // Route::get('logout', [AuthController::class, 'AuthLogout'])->name('logoutRequest');
-    // Route::get('forgot_password', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
-    // Route::post('forgot_password/send_password_reset_link', [AuthController::class, 'requestPasswordResetLink'])->name('requestPasswordResetLink');
-    // Route::get('reset_password/{token}', [AuthController::class, 'passwordResetPage'])->name('passwordResetLink');
-    // Route::post('reset_password/change_password/{token}', [AuthController::class, 'submitPasswordResetRequest'])->name('submitPasswordResetRequest');
+    Route::get('logout', [AuthController::class, 'AuthLogout'])->name('logoutRequest');
+    Route::get('forgot_password', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
+    Route::post('forgot_password/send_password_reset_link', [AuthController::class, 'requestPasswordResetLink'])->name('requestPasswordResetLink');
+    Route::get('reset_password/{token}', [AuthController::class, 'passwordResetPage'])->name('passwordResetLink');
+    Route::post('reset_password/change_password/{token}', [AuthController::class, 'submitPasswordResetRequest'])->name('submitPasswordResetRequest');
 
     // Route::get('maintenance_mode', [AuthController::class, 'maintenanceMode'])->name('maintenanceMode');
 

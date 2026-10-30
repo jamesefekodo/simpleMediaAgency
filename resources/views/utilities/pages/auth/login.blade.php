@@ -46,7 +46,7 @@
                         Remember me
                     </label> --}}
 
-                    <a class="forgot-link" {{-- href="{{ route('password.request') }}" --}}>
+                    <a class="forgot-link" href="{{ route('forgotPassword') }}">
                         Forgot password?
                     </a>
                 </div>
@@ -58,19 +58,20 @@
 
                 <div class="divider">or continue with</div>
 
-                <a class="btn btn-google" href="{{ url('/auth/google/redirect') }}">  <i class="fa-brands fa-google me-1"></i>
+                <a class="btn btn-google" href="{{ url('/auth/google/redirect') }}"> <i
+                        class="fa-brands fa-google me-1"></i>
                     Continue with Google
                 </a>
 
                 <p class="auth-footer">
-                  <span class="">
-                      New to {{ basicSystemInfo()->app_name ?? config('app.name') }}?
-                    <a href="{{ route('registrationPage') }}">Create an account</a>
-                  </span> <br>
-                  <span class="">
-                    Forgot Password
-                    <a {{-- href="{{ route('register') }}" --}}>Click here</a>
-                  </span>
+                    <span class="">
+                        New to {{ basicSystemInfo()->app_name ?? config('app.name') }}?
+                        <a href="{{ route('registrationPage') }}">Create an account</a>
+                    </span> <br>
+                    {{-- <span class="">
+                        Forgot Password
+                        <a href="{{ route('forgotPassword') }}">Click here</a>
+                    </span> --}}
                 </p>
 
             </form>

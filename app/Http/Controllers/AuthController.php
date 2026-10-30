@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Auth\NewAccountWelcomeMail;
+use App\Mail\Auth\PasswordResetMail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -65,14 +66,14 @@ class AuthController extends Controller
     public function requestPasswordResetLink(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email|exists:users,email_1',
         ]);
 
         $user = User::getEmailCheck($request->email);
         if (!empty($user)) {
             $user->remember_token = Str::random(30);
             $user->save();
-            // Mail::to($user->email)->send(new PasswordResetMail($user));
+            Mail::to($user->email_1)->send(new PasswordResetMail($user));
 
             return redirect()->route('loginPage')->with('success', "Sent!");
         } else {
@@ -104,7 +105,7 @@ class AuthController extends Controller
         // Validate input
         $validator = Validator::make($request->all(), [
             'password' => $passwordRules,
-            'confirm_password' => 'required|string|same:password',
+            'password_confirmation' => 'required|string|same:password',
         ]);
 
         // Check validation results
@@ -114,7 +115,7 @@ class AuthController extends Controller
                 ->withInput(); // Retain user input
         }
 
-        if ($request->password == $request->confirm_password) {
+        if ($request->password == $request->password_confirmation) {
             $user = User::getTokenSingle($token);
             if (!$user) {
                 return redirect()->back()->with('error', 'User record not found!');
