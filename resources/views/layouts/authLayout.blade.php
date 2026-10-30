@@ -174,7 +174,7 @@
         loginForm.addEventListener('submit', () => {
             submitButton.disabled = true;
             submitButton.classList.add('loading');
-            buttonLabel.textContent = 'Signing in…';
+            buttonLabel.textContent = 'Please wait…';
         });
     </script>
 

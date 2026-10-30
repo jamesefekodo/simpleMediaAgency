@@ -23,11 +23,11 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
     Route::get('reset_password/{token}', [AuthController::class, 'passwordResetPage'])->name('passwordResetLink');
     Route::post('reset_password/change_password/{token}', [AuthController::class, 'submitPasswordResetRequest'])->name('submitPasswordResetRequest');
 
-    // Route::get('maintenance_mode', [AuthController::class, 'maintenanceMode'])->name('maintenanceMode');
+    Route::get('maintenance_mode', [AuthController::class, 'maintenanceMode'])->name('maintenanceMode');
 
-    // Route::get('verify_email', [AuthController::class, 'verifyUserEmail'])->name('verifyUserEmail');
-    // Route::get('verify_email/resend_otp', [AuthController::class, 'resendEmailVerificationCodeEmailtoUser'])->name('verifyUserEmailResendOtp');
-    // Route::post('verify_emal/submit', [AuthController::class, 'verifyUserEmailSubmit'])->name('verifyUserEmailSubmit');
+    Route::get('verify_email', [AuthController::class, 'verifyUserEmail'])->name('verifyUserEmail');
+    Route::get('verify_email/resend_otp', [AuthController::class, 'resendEmailVerificationCodeEmailtoUser'])->name('verifyUserEmailResendOtp');
+    Route::post('verify_emal/submit', [AuthController::class, 'verifyUserEmailSubmit'])->name('verifyUserEmailSubmit');
 
 
     // Route::get('login/authenticate', [AuthController::class, 'authenticateLogin'])->name('authenticateLogin');
