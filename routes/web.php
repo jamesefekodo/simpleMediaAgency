@@ -42,8 +42,8 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
     Route::post('system/configuration/policies_and_terms/user/agree', [SystemPolicyController::class, 'userAgreeToSystemPolicy'])->name('userAgreeToSystemPolicy');
 
     // // session management
-    // Route::get('manage_sessions', [AuthController::class, 'manageSession'])->name('manageSession');
-    // Route::get('end_other_sessions', [AuthController::class, 'endOtherSessions'])->name('endOtherSessions');
+    Route::get('manage_sessions', [AuthController::class, 'manageSession'])->name('manageSession');
+    Route::get('end_other_sessions', [AuthController::class, 'endOtherSessions'])->name('endOtherSessions');
     // Route::get('disabled_account', [AuthController::class, 'disabledUserAccount'])->name('disabledUserAccount');
 });
 
