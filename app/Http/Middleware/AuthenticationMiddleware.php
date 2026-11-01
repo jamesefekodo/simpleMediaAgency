@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\BasicSystemSetting;
+use App\Models\Config\SystemPolicy\SystemPolicy;
+use App\Models\Config\SystemPolicy\UserAgreedPolicy;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -129,76 +131,76 @@ class AuthenticationMiddleware
             }
 
 
-            // // Policy Guard
+            // Policy Guard
+            ############# -> Init
+            // 0 - admin, 1-staff , 2- customer
+            $applicableToUserColumn = null;
+
+            // Determine the applicable column based on account type or admin privilege
+            if (in_array($user->account_type, [0, 1])) {
+                $applicableToUserColumn = 'applicable_to_administrator';
+            } elseif ($user->account_type == 2) {
+                $applicableToUserColumn = 'applicable_to_customer';
+            }
+
+            // Retrieve the active system policies that are applicable to the user
+            $systemPolicies = SystemPolicy::where('is_active', true);
+
+            if ($applicableToUserColumn) {
+                $systemPolicies->where($applicableToUserColumn, true);
+            }
+
+            $systemPolicies = $systemPolicies->get();
+
+            // Reverify the first functions
             // ############# -> Init
-            //  0 - root/admin, 1-member ---------- 90 - odu root
-            // $applicableToUserColumn = null;
 
-            // // Determine the applicable column based on account type or admin privilege
-            // if (in_array($user->account_type, [0, 90]) || $user->admin_privilege) {
-            //     $applicableToUserColumn = 'applicable_to_administrator';
-            // } elseif ($user->account_type == 1) {
-            //     $applicableToUserColumn = 'applicable_to_member';
-            // }
-
-            // // Retrieve the active system policies that are applicable to the user
-            // $systemPolicies = SystemPolicy::where('is_active', true);
-
-            // if ($applicableToUserColumn) {
-            //     $systemPolicies->where($applicableToUserColumn, true);
-            // }
-
-            // $systemPolicies = $systemPolicies->get();
-
-            // // Reverify the first functions
-            // // ############# -> Init
-
-            // if (
-            //     $maintenanceStatus === 'cleared' &&
-            //     $emailVerificationStatus === 'cleared' &&
-            //     $mfaVerificationStatus === 'cleared' &&
-            //     $policyGuard === 'waiting'
+            if (
+                $maintenanceStatus === 'cleared' &&
+                $emailVerificationStatus === 'cleared' &&
+                $mfaVerificationStatus === 'cleared' &&
+                $policyGuard === 'waiting'
 
 
-            // ) {
-            //     if (
-            //         $maintenanceStatus === 'cleared' &&
-            //         $emailVerificationStatus === 'cleared' &&
-            //         $mfaVerificationStatus === 'cleared' &&
-            //         $policyGuard === 'waiting'
-            //     ) {
-            //         $hasUnagreedPolicy = false;
+            ) {
+                if (
+                    $maintenanceStatus === 'cleared' &&
+                    $emailVerificationStatus === 'cleared' &&
+                    $mfaVerificationStatus === 'cleared' &&
+                    $policyGuard === 'waiting'
+                ) {
+                    $hasUnagreedPolicy = false;
 
-            //         foreach ($systemPolicies as $policy) {
-            //             $reAgreementRequired = UserAgreedPolicy::where('username', $user->username)
-            //                 ->where('policy', $policy->slug)
-            //                 ->where('agreement_status', '!=', 'agreed')
-            //                 ->exists();
+                    foreach ($systemPolicies as $policy) {
+                        $reAgreementRequired = UserAgreedPolicy::where('username', $user->username)
+                            ->where('policy', $policy->slug)
+                            ->where('agreement_status', '!=', 'agreed')
+                            ->exists();
 
-            //             $agreementRecordNotFound = !UserAgreedPolicy::where('username', $user->username)
-            //                 ->where('policy', $policy->slug)
-            //                 ->exists();
+                        $agreementRecordNotFound = !UserAgreedPolicy::where('username', $user->username)
+                            ->where('policy', $policy->slug)
+                            ->exists();
 
-            //             if ($reAgreementRequired || $agreementRecordNotFound) {
-            //                 $hasUnagreedPolicy = true;
+                        if ($reAgreementRequired || $agreementRecordNotFound) {
+                            $hasUnagreedPolicy = true;
 
-            //                 if (
-            //                     !Route::is('manageSystemPolicyAgreement') &&
-            //                     !Route::is('userAgreeToSystemPolicy') &&
-            //                     !Route::is('logoutRequest')
-            //                 ) {
-            //                     return redirect()->route('manageSystemPolicyAgreement');
-            //                 }
+                            if (
+                                !Route::is('manageSystemPolicyAgreement') &&
+                                !Route::is('userAgreeToSystemPolicy') &&
+                                !Route::is('logoutRequest')
+                            ) {
+                                return redirect()->route('manageSystemPolicyAgreement');
+                            }
 
-            //                 break;
-            //             }
-            //         }
+                            break;
+                        }
+                    }
 
-            //         if (!$hasUnagreedPolicy) {
-            //             $policyGuard = 'cleared';
-            //         }
-            //     }
-            // }
+                    if (!$hasUnagreedPolicy) {
+                        $policyGuard = 'cleared';
+                    }
+                }
+            }
 
 
 

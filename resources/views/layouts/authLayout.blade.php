@@ -32,7 +32,7 @@
 
     <title>
         @yield('title') |
-        {{ config('app.name') }}
+        {{ basicSystemInfo()->acronym ?? config('app.name') }}
     </title>
 </head>
 

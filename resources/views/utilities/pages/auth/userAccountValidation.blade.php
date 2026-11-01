@@ -25,7 +25,7 @@
                     <label for="email">Verification Code</label>
 
                     <input class="input" id="email_verification_code" name="email_verification_code" type="number"
-                        value="{{ old('email_verification_code') }}" placeholder="******" required>
+                        value="{{ old('email_verification_code') }}" placeholder="******" autocomplete="none" required>
                     <p style="color: red">{{ $errors->first('email_verification_code') }}</p>
                 </div>
                 <button class="btn btn-primary" id="submitButton" type="submit">

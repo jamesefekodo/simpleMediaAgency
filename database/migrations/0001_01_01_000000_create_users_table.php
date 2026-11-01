@@ -32,7 +32,7 @@ return new class extends Migration
             $table->boolean('email_verification')->default(false);
             $table->string('email_verification_code')->nullable();
             $table->timestamp('email_verification_code_expires_at')->nullable();
-            $table->boolean('admin_privilege')->default(false);
+            // $table->boolean('admin_privilege')->default(false);
             $table->string('password');
             $table->string('last_seen_at')->nullable();
             $table->rememberToken();

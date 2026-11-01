@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Config\PolicyController;
+use App\Http\Controllers\Config\SystemPolicyController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -27,16 +30,16 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
 
     Route::get('verify_email', [AuthController::class, 'verifyUserEmail'])->name('verifyUserEmail');
     Route::get('verify_email/resend_otp', [AuthController::class, 'resendEmailVerificationCodeEmailtoUser'])->name('verifyUserEmailResendOtp');
-    Route::post('verify_emal/submit', [AuthController::class, 'verifyUserEmailSubmit'])->name('verifyUserEmailSubmit');
+    Route::post('verify_email/submit', [AuthController::class, 'verifyUserEmailSubmit'])->name('verifyUserEmailSubmit');
 
 
-    // Route::get('login/authenticate', [AuthController::class, 'authenticateLogin'])->name('authenticateLogin');
-    // Route::post('login/authenticate/submit', [AuthController::class, 'verifyLoginOtpSubmit'])->name('verifyLoginOtpSubmit');
-    // Route::get('login/authenticate/resend_otp', [AuthController::class, 'resendLoginOtp'])->name('resendLoginOtp');
+    Route::get('login/authenticate', [AuthController::class, 'authenticateLogin'])->name('authenticateLogin');
+    Route::post('login/authenticate/submit', [AuthController::class, 'verifyLoginOtpSubmit'])->name('verifyLoginOtpSubmit');
+    Route::get('login/authenticate/resend_otp', [AuthController::class, 'resendLoginOtp'])->name('resendLoginOtp');
 
-    // // Policy Agreement
-    // Route::get('system/configuration/policies_and_terms/user/manage', [SystemPolicyController::class, 'manageSystemPolicyAgreement'])->name('manageSystemPolicyAgreement');
-    // Route::post('system/configuration/policies_and_terms/user/agree', [SystemPolicyController::class, 'userAgreeToSystemPolicy'])->name('userAgreeToSystemPolicy');
+    // Policy Agreement
+    Route::get('system/configuration/policies_and_terms/user/manage', [SystemPolicyController::class, 'manageSystemPolicyAgreement'])->name('manageSystemPolicyAgreement');
+    Route::post('system/configuration/policies_and_terms/user/agree', [SystemPolicyController::class, 'userAgreeToSystemPolicy'])->name('userAgreeToSystemPolicy');
 
     // // session management
     // Route::get('manage_sessions', [AuthController::class, 'manageSession'])->name('manageSession');
@@ -46,5 +49,16 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
 
 // members routes
 Route::middleware(['authenticationMiddlewares', 'memberMiddlewares'])->group(function () {
-    // Route::get('member/dashboard', [DashboardController::class, 'dashboard'])->name('memberDashboard');
+    Route::get('member/dashboard', [DashboardController::class, 'dashboard'])->name('memberDashboard');
+});
+
+// admin routes
+Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(function () {
+    Route::get('admin/dashboard', [DashboardController::class, 'dashboard'])->name('adminDashboard');
+
+    // policies
+    Route::get('admin/config/policies', [PolicyController::class, 'policies'])->name('policies');
+    Route::get('admin/config/policies/search', [PolicyController::class, 'policies'])->name('policiesSearch');
+    Route::get('admin/config/policy/create', [PolicyController::class, 'newPolicy'])->name('newPolicy');
+    Route::post('admin/config/policy/create/submit', [PolicyController::class, 'addNewSystemPolicySubmit'])->name('addNewSystemPolicySubmit');
 });

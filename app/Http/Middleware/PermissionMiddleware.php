@@ -24,18 +24,10 @@ class PermissionMiddleware
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        // update admin access permission
-        $expectedPrivilege = $user->roles()->exists();
-
-        if ($user->admin_privilege !== $expectedPrivilege) {
-            User::where('username', $user->username)->update([
-                'admin_privilege' => $expectedPrivilege
-            ]);
-        }
 
 
         // Root user bypasses all permission checks
-        if (in_array($user->account_type, [0, 90])) {
+        if (in_array($user->account_type, [0, 1])) {
             return $next($request);
         }
 

@@ -24,7 +24,7 @@ class RoleMiddleware
         $user = Auth::user();
 
         // Root user bypasses all permission checks
-        if (in_array($user->account_type, [0, 90])) {
+        if (in_array($user->account_type, [0, 1])) {
             return $next($request);
         }
 

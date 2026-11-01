@@ -44,7 +44,7 @@ class User extends Authenticatable
         'email_verification',
         'email_verification_code',
         'email_verification_code_expires_at',
-        'admin_privilege',
+        // 'admin_privilege',
         'password',
         'last_seen_at',
         'first_name',

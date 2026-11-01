@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Auth\EmailVerificationMail;
+use App\Mail\Auth\LoginOtpMail;
 use App\Mail\Auth\NewAccountWelcomeMail;
 use App\Mail\Auth\PasswordResetMail;
 use App\Models\BasicSystemSetting;
@@ -418,14 +419,15 @@ class AuthController extends Controller
     }
 
 
-    private function sendLoginOtpByEmailtoUser($email, $otp)
+    private function sendLoginOtpByEmailtoUser($email_1, $otp)
     {
         // Send OTP to user's email
-        $user = User::where('email', $email)->first();
+        $user = User::where('email_1', $email_1)->first();
         if (!$user) {
             return redirect()->back()->with('error', 'Error!');
         } else {
-            // Mail::to($email)->queue((new LoginOtpMail($email, $user, $otp))->onConnection('deferred')->afterCommit());
+            $email = $email_1;
+            Mail::to($email)->queue((new LoginOtpMail($email, $user, $otp))->onConnection('deferred')->afterCommit());
         }
     }
     public function loginOtpExpiredLogout()
@@ -491,7 +493,7 @@ class AuthController extends Controller
                 Carbon::parse($currentSession->login_otp_expires_at)->lt(now())
             ) {
                 $otp = $this->generateTwoFactorCode($user, $currentSession);
-                $this->sendLoginOtpByEmailtoUser($user->email, $otp);
+                $this->sendLoginOtpByEmailtoUser($user->email_1, $otp);
             }
 
             return view('utilities.pages.auth.loginOtpAuthentication');
@@ -538,7 +540,7 @@ class AuthController extends Controller
 
         if ($user) {
             $otp = $this->generateTwoFactorCode($user, $currentSession);
-            $this->sendLoginOtpByEmailtoUser($user->email, $otp);
+            $this->sendLoginOtpByEmailtoUser($user->email_1, $otp);
 
             return redirect()->back()->with('success', 'OTP Sent!');
         } else {
