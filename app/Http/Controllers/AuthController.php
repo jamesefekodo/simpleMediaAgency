@@ -582,4 +582,16 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+    public function inactiveAccount(){
+
+        $user = Auth::user();
+        if (!$user) {
+            return $this->accessDeniedLogout();
+        }
+        if ($user->is_active === false) {
+            return view('utilities.pages.auth.inactiveAccount');
+        } else {
+            return $this->redirectToUserDashboard($user->account_type);
+        }
+    }
 }

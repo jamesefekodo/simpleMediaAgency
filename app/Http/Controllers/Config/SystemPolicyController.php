@@ -8,9 +8,90 @@ use App\Models\Config\SystemPolicy\UserAgreedPolicy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class SystemPolicyController extends Controller
 {
+    public function policies(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.read'),
+            403
+        );
+
+        $requestType = '';
+        $searchKey = '';
+        $pageTitle = '';
+        $systemPolicies = '';
+
+
+        if (Route::currentRouteName() == 'policiesSearch') {
+            $searchKey = $request->input('searchKey');
+            $systemPolicies = SystemPolicy::where('title', 'like', "%$searchKey%")
+                ->orWhere('policy_statement', 'like', "%$searchKey%")
+                ->orWhere('applicable_to_customer', 'like', "%$searchKey%")
+                ->orWhere('applicable_to_administrator', 'like', "%$searchKey%")
+                ->orderBy('title')
+                ->paginate(20)->withQueryString();
+
+            $requestType = 'search';
+            $pageTitle = 'Search Results :: ' . $searchKey;
+        } else {
+            $systemPolicies = SystemPolicy::orderBy('title')->paginate(20);
+            $requestType = 'all';
+            $pageTitle = 'System Policies';
+        }
+
+        $data = [
+            'requestType' => $requestType,
+            'searchKey' => $searchKey,
+            'pageTitle' => $pageTitle,
+            'systemPolicies' => $systemPolicies,
+        ];
+
+        return view('users.admin.config.systemPolicy.systemPolicies', compact('data'));
+    }
+    public function newPolicy()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.create'),
+            403
+        );
+        return view('users.admin.config.systemPolicy.newSystemPolicies');
+    }
+    public function addNewSystemPolicySubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.create'),
+            403
+        );
+
+        $request->validate([
+            'title' => 'required',
+            'policy_statement' => 'required',
+            'applicable_to_customer' => 'required',
+            'applicable_to_administrator' => 'required',
+        ]);
+
+        $policy = new SystemPolicy();
+        $policy->title = $request->title;
+        $policy->policy_statement = $request->policy_statement;
+        $policy->applicable_to_customer = $request->applicable_to_customer;
+        $policy->applicable_to_administrator = $request->applicable_to_administrator;
+        $policy->save();
+
+        return redirect()->route('policies')->with('success', 'Done!');
+    }
+
     public function manageSystemPolicyAgreement()
     {
         $user = Auth::user();

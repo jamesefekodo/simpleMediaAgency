@@ -232,24 +232,24 @@ class AuthenticationMiddleware
 
             // Awaiting Verification
             // Reverify the first functions
-            // if (
-            //     $maintenanceStatus === 'cleared' &&
-            //     $emailVerificationStatus === 'cleared' &&
-            //     $mfaVerificationStatus === 'cleared' &&
-            //     $policyGuard === 'cleared' &&
-            //     $sessionLimitStatus === 'cleared'
+            if (
+                $maintenanceStatus === 'cleared' &&
+                $emailVerificationStatus === 'cleared' &&
+                $mfaVerificationStatus === 'cleared' &&
+                $policyGuard === 'cleared' &&
+                $sessionLimitStatus === 'cleared'
 
-            // ) {
-            //     if ($accountStatus == false) {
-            //         if (
-            //             !Route::is('disabledAccount')
-            //             && !Route::is('logoutRequest')
-            //         ) {
-            //             return redirect()->route('disabledAccount');
-            //         }
-            //     }
-            //     $inactiveAccount = 'cleared';
-            // }
+            ) {
+                if ($accountStatus == false) {
+                    if (
+                        !Route::is('inactiveAccount')
+                        && !Route::is('logoutRequest')
+                    ) {
+                        return redirect()->route('inactiveAccount');
+                    }
+                }
+                $inactiveAccount = 'cleared';
+            }
 
 
             // // Disabled Account

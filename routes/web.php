@@ -44,7 +44,7 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
     // // session management
     Route::get('manage_sessions', [AuthController::class, 'manageSession'])->name('manageSession');
     Route::get('end_other_sessions', [AuthController::class, 'endOtherSessions'])->name('endOtherSessions');
-    // Route::get('disabled_account', [AuthController::class, 'disabledUserAccount'])->name('disabledUserAccount');
+    Route::get('inactive_account', [AuthController::class, 'inactiveAccount'])->name('inactiveAccount');
 });
 
 // members routes
@@ -57,8 +57,8 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard'])->name('adminDashboard');
 
     // policies
-    Route::get('admin/config/policies', [PolicyController::class, 'policies'])->name('policies');
-    Route::get('admin/config/policies/search', [PolicyController::class, 'policies'])->name('policiesSearch');
-    Route::get('admin/config/policy/create', [PolicyController::class, 'newPolicy'])->name('newPolicy');
-    Route::post('admin/config/policy/create/submit', [PolicyController::class, 'addNewSystemPolicySubmit'])->name('addNewSystemPolicySubmit');
+    Route::get('admin/config/policies', [SystemPolicyController::class, 'policies'])->name('policies');
+    Route::get('admin/config/policies/search', [SystemPolicyController::class, 'policies'])->name('policiesSearch');
+    Route::get('admin/config/policy/create', [SystemPolicyController::class, 'newPolicy'])->name('newPolicy');
+    Route::post('admin/config/policy/create/submit', [SystemPolicyController::class, 'addNewSystemPolicySubmit'])->name('addNewSystemPolicySubmit');
 });

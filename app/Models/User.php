@@ -63,7 +63,8 @@ class User extends Authenticatable
             'email_verification' => 'boolean',
             'require_login_mfa' => 'boolean',
             'last_seen_at' => 'datetime',
-            'is_on_probation' => 'boolean'
+            'is_on_probation' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 
