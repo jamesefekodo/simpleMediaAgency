@@ -31,7 +31,7 @@
 
                 <div class="detail-actions">
                     @if (Auth::user()->hasPermission('policy.update'))
-                        <a href="{{ route('editPolicy', ['slug' => $policy->slug]) }}" class="btn-primary-custom">
+                        <a href="{{ route('editPolicy', ['slug' => $data['policy']->slug]) }}" class="btn-primary-custom">
                             <i class="fa-solid fa-pen"></i> Update
                         </a>
                     @endif

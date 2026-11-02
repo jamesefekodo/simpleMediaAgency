@@ -112,6 +112,68 @@ class SystemPolicyController extends Controller
         ];
         return view('users.admin.config.systemPolicy.viewSystemPolicy', compact('data'));
     }
+    public function editPolicy($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.update'),
+            403
+        );
+
+        $policy = SystemPolicy::where('slug', $slug)->first();
+        if (!$policy) {
+            return redirect()->back()->with('error', 'Policy not found!');
+        }
+        $data = [
+            'policy' => $policy,
+        ];
+        return view('users.admin.config.systemPolicy.editSystemPolicy', compact('data'));
+    }
+    public function updateSystemPolicy(Request $request, $slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.update'),
+            403
+        );
+
+        $request->validate([
+            'title' => 'required',
+            'policy_statement' => 'required',
+            'applicable_to_customer' => 'required',
+            'applicable_to_administrator' => 'required',
+            'is_active' => 'required',
+        ]);
+
+        $policy = SystemPolicy::where('slug', $slug)->first();
+        if (!$policy) {
+            return redirect()->back()->with('error', 'Policy not found!');
+        }
+
+        $existingAgreements = UserAgreedPolicy::where('policy', $policy->slug)->get();
+
+
+        $policy->title = $request->title;
+        $policy->policy_statement = $request->policy_statement;
+        $policy->applicable_to_customer = $request->applicable_to_customer;
+        $policy->applicable_to_administrator = $request->applicable_to_administrator;
+        $policy->updated_on = Carbon::now()->toDateString();
+        $policy->save();
+
+        if ($existingAgreements) {
+            foreach ($existingAgreements as $agreement) {
+                $agreement->agreement_status = 'updated';
+                $agreement->save();
+            }
+        }
+
+
+        return redirect()->route('policies')->with('success', 'Done!');
+    }
     public function manageSystemPolicyAgreement()
     {
         $user = Auth::user();

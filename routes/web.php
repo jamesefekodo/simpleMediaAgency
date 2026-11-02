@@ -62,4 +62,8 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/config/policy/create', [SystemPolicyController::class, 'newPolicy'])->name('newPolicy');
     Route::post('admin/config/policy/create/submit', [SystemPolicyController::class, 'addNewSystemPolicySubmit'])->name('addNewSystemPolicySubmit');
     Route::get('admin/config/policy/view/{slug}', [SystemPolicyController::class, 'viewPolicy'])->name('viewPolicy');
+    Route::get('admin/config/policy/edit/{slug}', [SystemPolicyController::class, 'editPolicy'])->name('editPolicy');
+    Route::put('admin/config/policy/update/{slug}', [SystemPolicyController::class, 'updateSystemPolicy'])->name('updateSystemPolicy');
+
+
 });

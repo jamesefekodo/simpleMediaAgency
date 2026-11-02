@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="panel-footer form-actions">
-                    <a href="{{ route('policies') }}" class="btn-outline-light-custom">
+                    <a href="{{ route('policies') }}" class="btn btn-outline-danger">
                         Cancel
                     </a>
 
