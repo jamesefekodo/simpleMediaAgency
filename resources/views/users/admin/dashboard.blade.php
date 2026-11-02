@@ -1,188 +1,251 @@
 @extends('layouts.userLayout')
 @section('title', 'Dashboard')
 @section('content')
-    <header class="topbar">
-        <div class="topbar-left">
-            <div>
-                <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle">Overview of Rayda store, media and community activity.</p>
-            </div>
-        </div>
 
-        <div class="topbar-actions">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input class="search-input" type="search" placeholder="Search orders, products, creators...">
-            </div>
+@section('topbar_left')
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Monitor store performance, customers and system activity.</p>
+    </div>
+@endsection
 
-            <button class="icon-button theme-toggle" type="button" aria-label="Toggle theme">
-                <i class="fa-solid fa-sun"></i>
-            </button>
+<div class="content">
 
-            <a class="btn btn-lime" href="#">
-                <i class="fa-solid fa-plus"></i> New Product
+    <section class="welcome-card">
+        <h2>Welcome back, {{ auth()->user()->name ?? 'Administrator' }}</h2>
+        <p>
+            Here is a quick overview of your platform performance, recent customer activity and
+            important operational updates.
+        </p>
+
+        <div class="welcome-actions">
+            <a href="#" class="btn-light-custom">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Reports
+            </a>
+
+            <a href="#" class="btn-outline-light-custom">
+                <i class="fa-solid fa-users"></i> Manage Customers
             </a>
         </div>
-    </header>
+    </section>
 
-    <div class="content">
-        {{-- Stats --}}
-        <section class="stats-grid">
-            <article class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-icon"><i class="fa-solid fa-naira-sign"></i></span>
-                    <span class="stat-trend">+12.4%</span>
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon indigo">
+                    <i class="fa-solid fa-users"></i>
                 </div>
-                <div class="stat-value">₦0</div>
-                <p class="stat-label">Total revenue</p>
-            </article>
-
-            <article class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></span>
-                    <span class="stat-trend">+8.1%</span>
-                </div>
-                <div class="stat-value">0</div>
-                <p class="stat-label">Orders</p>
-            </article>
-
-            <article class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-icon"><i class="fa-solid fa-users"></i></span>
-                    <span class="stat-trend">+24</span>
-                </div>
-                <div class="stat-value">0</div>
-                <p class="stat-label">Community members</p>
-            </article>
-
-            <article class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-icon"><i class="fa-solid fa-briefcase"></i></span>
-                    <span class="stat-trend down">-2.3%</span>
-                </div>
-                <div class="stat-value">0</div>
-                <p class="stat-label">Open opportunities</p>
-            </article>
-        </section>
-
-        {{-- Chart + activity --}}
-        <section class="panel-grid">
-            <div class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Revenue overview</h2>
-                        <p>Store performance for the selected period.</p>
-                    </div>
-                    <a class="panel-link" href="#">View report</a>
-                </div>
-
-                <div class="chart-placeholder">
-                    Connect Chart.js, ApexCharts or your preferred chart library here.
-                </div>
+                <span class="stat-trend trend-up">+12.4%</span>
             </div>
 
-            <div class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Recent activity</h2>
-                        <p>Latest admin and customer events.</p>
-                    </div>
-                    <a class="panel-link" href="#">View all</a>
+            <div class="stat-value">2,486</div>
+            <div class="stat-label">Total Customers</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-naira-sign"></i>
                 </div>
-
-                <div class="activity-list">
-                    <div class="activity">
-                        <span class="activity-icon"><i class="fa-solid fa-bag-shopping"></i></span>
-                        <div>
-                            <strong>New order received</strong>
-                            <small>Rayda Creator Kit · Just now</small>
-                        </div>
-                    </div>
-
-                    <div class="activity">
-                        <span class="activity-icon"><i class="fa-solid fa-user-plus"></i></span>
-                        <div>
-                            <strong>New community signup</strong>
-                            <small>Content creator · 12 minutes ago</small>
-                        </div>
-                    </div>
-
-                    <div class="activity">
-                        <span class="activity-icon"><i class="fa-solid fa-envelope"></i></span>
-                        <div>
-                            <strong>New contact enquiry</strong>
-                            <small>Video production request · 1 hour ago</small>
-                        </div>
-                    </div>
-
-                    <div class="activity">
-                        <span class="activity-icon"><i class="fa-solid fa-briefcase"></i></span>
-                        <div>
-                            <strong>New gig application</strong>
-                            <small>Freelance videographer · 3 hours ago</small>
-                        </div>
-                    </div>
-                </div>
+                <span class="stat-trend trend-up">+8.1%</span>
             </div>
-        </section>
 
-        {{-- Orders table --}}
-        <section class="panel table-panel">
+            <div class="stat-value">₦4.82M</div>
+            <div class="stat-label">Total Revenue</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon amber">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <span class="stat-trend trend-down">-2.3%</span>
+            </div>
+
+            <div class="stat-value">318</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon red">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <span class="stat-trend trend-up">+5.6%</span>
+            </div>
+
+            <div class="stat-value">27</div>
+            <div class="stat-label">Open Issues</div>
+        </div>
+    </section>
+
+    <section class="panel-grid">
+        <div class="panel">
             <div class="panel-header">
                 <div>
-                    <h2>Recent orders</h2>
-                    <p>Latest gadget kit orders and payment statuses.</p>
+                    <h3>Recent Orders</h3>
+                    <span>Latest customer transactions</span>
                 </div>
-                <a class="btn btn-ghost" href="#">View orders</a>
+
+                <a href="#" class="btn-primary-custom">
+                    View All
+                </a>
             </div>
 
-            <div class="table-wrap">
-                <table>
+            <div class="table-responsive">
+                <table class="table">
                     <thead>
                         <tr>
-                            <th>Order</th>
                             <th>Customer</th>
-                            <th>Product</th>
+                            <th>Order</th>
                             <th>Amount</th>
                             <th>Status</th>
-                            <th>Date</th>
-                            <th></th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr>
-                            <td>#RD-1042</td>
-                            <td>Amina Bello</td>
-                            <td>Rayda Creator Kit</td>
-                            <td>₦0</td>
-                            <td><span class="status success">Paid</span></td>
-                            <td>Oct 29, 2026</td>
-                            <td><a class="table-action" href="#">View</a></td>
+                            <td>
+                                <div class="customer">
+                                    <div class="customer-avatar">AO</div>
+                                    <div>
+                                        <strong>Ada Obi</strong>
+                                        <span>ada@example.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>#ORD-1042</td>
+                            <td>₦84,500</td>
+                            <td><span class="status-pill completed">Completed</span></td>
                         </tr>
 
                         <tr>
-                            <td>#RD-1041</td>
-                            <td>David Okoro</td>
-                            <td>Content Creation Kit</td>
-                            <td>₦0</td>
-                            <td><span class="status pending">Pending</span></td>
-                            <td>Oct 29, 2026</td>
-                            <td><a class="table-action" href="#">View</a></td>
+                            <td>
+                                <div class="customer">
+                                    <div class="customer-avatar">MB</div>
+                                    <div>
+                                        <strong>Musa Bello</strong>
+                                        <span>musa@example.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>#ORD-1041</td>
+                            <td>₦32,000</td>
+                            <td><span class="status-pill pending">Pending</span></td>
                         </tr>
 
                         <tr>
-                            <td>#RD-1040</td>
-                            <td>Zainab Yusuf</td>
-                            <td>Creator Pro Bundle</td>
-                            <td>₦0</td>
-                            <td><span class="status failed">Failed</span></td>
-                            <td>Oct 28, 2026</td>
-                            <td><a class="table-action" href="#">View</a></td>
+                            <td>
+                                <div class="customer">
+                                    <div class="customer-avatar">CE</div>
+                                    <div>
+                                        <strong>Chidi Eze</strong>
+                                        <span>chidi@example.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>#ORD-1040</td>
+                            <td>₦126,750</td>
+                            <td><span class="status-pill failed">Failed</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="customer">
+                                    <div class="customer-avatar">NA</div>
+                                    <div>
+                                        <strong>Ngozi Ade</strong>
+                                        <span>ngozi@example.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>#ORD-1039</td>
+                            <td>₦58,900</td>
+                            <td><span class="status-pill completed">Completed</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </section>
-    </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <h3>Quick Actions</h3>
+                    <span>Common admin tasks</span>
+                </div>
+            </div>
+
+            <div class="quick-grid">
+                <a href="#" class="quick-action">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <strong>Add Customer</strong>
+                    <span>Create a new customer account</span>
+                </a>
+
+                <a href="#" class="quick-action">
+                    <i class="fa-solid fa-box-open"></i>
+                    <strong>Add Product</strong>
+                    <span>Publish a new product</span>
+                </a>
+
+                <a href="#" class="quick-action">
+                    <i class="fa-solid fa-file-shield"></i>
+                    <strong>Create Policy</strong>
+                    <span>Manage platform policies</span>
+                </a>
+
+                <a href="#" class="quick-action">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <strong>Add Admin</strong>
+                    <span>Invite an administrator</span>
+                </a>
+            </div>
+
+            <div class="panel-header" style="margin-top: 28px;">
+                <div>
+                    <h3>Recent Activity</h3>
+                    <span>System and user events</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div>
+                    <strong>New customer registered</strong>
+                    <p>Ada Obi created an account.</p>
+                    <span class="activity-time">12 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+
+                <div>
+                    <strong>New order received</strong>
+                    <p>Order #ORD-1042 was placed.</p>
+                    <span class="activity-time">35 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <strong>Policy updated</strong>
+                    <p>Refund Policy was modified.</p>
+                    <span class="activity-time">2 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
 @endsection

@@ -1,191 +1,157 @@
-<aside class="sidebar" id="adminSidebar">
-    <div class="sidebar-mobile-header">
-        <a class="sidebar-brand" href="{{ route('adminDashboard') }}">
-            <img class="brand-logo" src="{{ logo() }}" alt="Logo">
+  <aside class="admin-sidebar" id="adminSidebar">
+      <a class="sidebar-brand" href="{{ route('adminDashboard') }}">
+          <img src="{{ logo() }}" alt="Logo">
+          <div>
+              <strong>{{ basicSystemInfo()->acronym ?? config('app.name') }}</strong>
+              <span>Admin Console</span>
+          </div>
+      </a>
 
-            <span class="brand-copy">
-                <strong>{{ basicSystemInfo()->acronym ?? config('app.name') }}</strong>
-                <small>ADMIN PANEL</small>
-            </span>
-        </a>
+      <nav class="sidebar-nav">
+          <div class="sidebar-label">Overview</div>
 
-        <button class="icon-button sidebar-close" id="sidebarClose" type="button" aria-label="Close menu">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
+          <a class="sidebar-link active" href="{{ route('adminDashboard') }}">
+              <i class="fa-solid fa-chart-pie"></i> Dashboard
+          </a>
 
-    {{-- One scrollable area for the whole menu --}}
-    <div class="sidebar-body">
-        <p class="sidebar-label">Main</p>
+          <a class="sidebar-link" href="#">
+              <i class="fa-solid fa-chart-line"></i> Analytics
+          </a>
 
-        <nav class="sidebar-nav">
-            <a class="nav-item {{ Route::is('adminDashboard') ? 'active' : '' }}" href="{{ route('adminDashboard') }}">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
-            </a>
+          <div class="sidebar-label">Commerce</div>
 
-            {{-- Store --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                        Store
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+          <div class="nav-item">
+              <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <i class="fa-solid fa-box"></i>
+                  Products
+                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+              </button>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Products</a>
-                        <a href="#">Categories</a>
-                        <a href="#">Orders</a>
-                        <a href="#">Coupons</a>
-                        <a href="#">Payments</a>
-                    </div>
-                </div>
-            </div>
+              <div class="nav-dropdown">
+                  <div class="nav-dropdown-items">
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-circle-dot"></i> All Products
+                      </a>
 
-            {{-- Users --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-users"></i>
-                        Users
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-plus"></i> Add Product
+                      </a>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Customers</a>
-                        <a href="#">Admins</a>
-                    </div>
-                </div>
-            </div>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-tags"></i> Categories
+                      </a>
 
-            {{-- Media --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-photo-film"></i>
-                        Media
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-boxes-stacked"></i> Inventory
+                      </a>
+                  </div>
+              </div>
+          </div>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Portfolio</a>
-                        <a href="#">Services</a>
-                        <a href="#">Events</a>
-                        <a href="#">Gallery</a>
-                    </div>
-                </div>
-            </div>
+          <div class="nav-item">
+              <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <i class="fa-solid fa-receipt"></i>
+                  Orders
+                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+              </button>
 
-            {{-- Community --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-users"></i>
-                        Community
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+              <div class="nav-dropdown">
+                  <div class="nav-dropdown-items">
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-circle-dot"></i> All Orders
+                      </a>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Members</a>
-                        <a href="#">Creator Types</a>
-                        <a href="#">Email Subscribers</a>
-                        <a href="#">Contact Enquiries</a>
-                    </div>
-                </div>
-            </div>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-clock"></i> Pending Orders
+                      </a>
 
-            {{-- Opportunities --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-briefcase"></i>
-                        Opportunities
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-truck"></i> Shipments
+                      </a>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Jobs</a>
-                        <a href="#">Gigs</a>
-                        <a href="#">Applications</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-rotate-left"></i> Refunds
+                      </a>
+                  </div>
+              </div>
+          </div>
 
-        <p class="sidebar-label">System</p>
+          <a class="sidebar-link" href="#">
+              <i class="fa-solid fa-users"></i> Customers
+          </a>
 
-        <nav class="sidebar-nav">
-            {{-- Reports --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-chart-line"></i>
-                        Reports
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+          <a class="sidebar-link" href="#">
+              <i class="fa-solid fa-wallet"></i> Transactions
+          </a>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">Sales Report</a>
-                        <a href="#">Community Report</a>
-                        <a href="#">Media Report</a>
-                    </div>
-                </div>
-            </div>
+          <div class="sidebar-label">System</div>
 
-            {{-- Settings --}}
-            <div class="nav-group">
-                <button class="nav-dropdown-button active" type="button" aria-expanded="false">
-                    <span class="nav-left">
-                        <i class="fa-solid fa-gear"></i>
-                        Settings
-                    </span>
-                    <i class="fa-solid fa-chevron-down chevron"></i>
-                </button>
+          <div class="nav-item {{ Str::startsWith(request()->path(), 'admin/config') ? 'active' : '' }}">
+              <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <i class="fa-solid fa-gear"></i>
+                  Config
+                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+              </button>
 
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-inner">
-                        <a href="#">General</a>
-                        <a href="#">Branding</a>
-                        <a href="#">Roles</a>
+              <div class="nav-dropdown">
+                  <div class="nav-dropdown-items">
+                      @if (Auth::user()->hasPermission('policy.read'))
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/config/policies') ? 'active' : '' }}"
+                              href="{{ route('policies') }}">
+                              <i class="fa-solid fa-shield-halved"></i> Policies
+                          </a>
+                      @endif
 
-                        @if (Auth::user()->hasPermission('policy.read'))
-                            <a href="{{ route('policies') }}"
-                                class="{{ Str::startsWith(request()->path(), 'admin/config/policies') ? 'active' : '' }}">
-                                Policies
+                      {{-- <a class="nav-sub-link" href="#">
+                                <i class="fa-solid fa-plus"></i> Create Policy
                             </a>
-                        @endif
 
-                        <a href="#">Payment Gateways</a>
-                        <a href="#">Email Settings</a>
-                        <a href="#">Admin Users</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </div>
+                            <a class="nav-sub-link" href="#">
+                                <i class="fa-solid fa-file-shield"></i> Policy Categories
+                            </a> --}}
+                  </div>
+              </div>
+          </div>
 
-    <div class="sidebar-footer">
-        <div class="admin-user">
-            <span class="avatar">R</span>
+          <div class="nav-item">
+              <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <i class="fa-solid fa-user-shield"></i>
+                  Administration
+                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+              </button>
 
-            <span>
-                <strong>Rayda Admin</strong>
-                <small>admin@rayda.com</small>
-            </span>
-        </div>
-    </div>
-</aside>
+              <div class="nav-dropdown">
+                  <div class="nav-dropdown-items">
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-users-gear"></i> Administrators
+                      </a>
 
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-user-lock"></i> Roles
+                      </a>
+
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-key"></i> Permissions
+                      </a>
+                  </div>
+              </div>
+          </div>
+
+          <a class="sidebar-link" href="#">
+              <i class="fa-solid fa-gear"></i> Settings
+          </a>
+      </nav>
+
+      <div class="sidebar-footer">
+          <div class="sidebar-user">
+              <div class="sidebar-user-avatar">
+                  {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
+              </div>
+
+              <div>
+                  <strong>{{ auth()->user()->name ?? 'Administrator' }}</strong>
+                  <span>{{ auth()->user()->email ?? 'admin@example.com' }}</span>
+              </div>
+          </div>
+      </div>
+  </aside>

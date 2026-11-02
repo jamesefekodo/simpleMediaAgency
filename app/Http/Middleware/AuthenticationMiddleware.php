@@ -60,7 +60,7 @@ class AuthenticationMiddleware
             // 0 - admin, 1-staff , 2- customer
 
             $accountType = (int) $user->account_type;
-            $accountStatus = $user->account_status;
+            $accountStatus = (bool) $user->is_active;
             $maintenanceModeLock = $basicDefaultSettings->maintenance_mode === true && (int) $accountType !== 0;
 
 

@@ -2,59 +2,52 @@
 
 @section('title', $data['pageTitle'])
 
+@section('topbar_left')
+    <div>
+        <h1 class="page-title">{{ $data['pageTitle'] }}</h1>
+        <p class="page-subtitle">Manage policies.</p>
+    </div>
+@endsection
+
+@section('topbar_actions')
+    <form method="GET" class="search-box" action="{{ route('policiesSearch') }}">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input class="search-input" type="search" name="searchKey" value="{{ $data['searchKey'] }}"
+            placeholder="Search policies..." aria-label="Search policies">
+    </form>
+
+    @if (Auth::user()->hasPermission('policy.create'))
+        <a href="{{ route('newPolicy') }}" class="btn-primary-custom">
+            <i class="fa-solid fa-plus"></i> New Policy
+        </a>
+    @endif
+@endsection
+
 @section('content')
-    <header class="topbar">
-        <div class="topbar-left">
-            <div>
-                <h1 class="page-title">{{ $data['pageTitle'] }}</h1>
-                <p class="page-subtitle">
-                    Manage policies.
-                </p>
-            </div>
-        </div>
-
-        <div class="topbar-actions">
-            <form method="GET" class="search-box" action="{{ route('policiesSearch') }}">
-                <i class="fa-solid fa-magnifying-glass"></i>
-
-                <input class="search-input" type="search" name="searchKey" value="{{ $data['searchKey'] }}"
-                    placeholder="Search policies..." aria-label="Search policies">
-            </form>
-
-            <button class="icon-button theme-toggle" type="button" aria-label="Toggle theme">
-                <i class="fa-solid fa-sun"></i>
-            </button>
-
-            @if (Auth::user()->hasPermission('policy.create'))
-                <a href="{{ route('newPolicy') }}" class="btn btn-lime" >
-                    <i class="fa-solid fa-plus"></i> New Policy
-                </a>
-            @endif
-        </div>
-    </header>
-
     <div class="content">
-        <div class="panel table-panel">
+        <div class="panel">
             <div class="panel-header">
                 <div>
-                    <h2>System Policies</h2>
-                    <p>
+                    <h3>System Policies</h3>
+                    <span>
                         {{ $data['systemPolicies']->total() }}
                         {{ $data['systemPolicies']->total() === 1 ? 'policy' : 'policies' }} found
-                    </p>
+                    </span>
                 </div>
 
                 @if ($data['requestType'] === 'search')
-                    <a class="btn btn-ghost" href="{{ route('policies') }}">
-                        <i class="fa-solid fa-arrow-left"></i>
-                        Clear search
+                    <a href="{{ route('policies') }}" class="btn-outline-light-custom">
+                        <i class="fa-solid fa-arrow-left"></i> Clear search
                     </a>
                 @endif
             </div>
 
             @if ($data['systemPolicies']->isEmpty())
                 <div class="empty-state">
-                    <i class="fa-solid fa-file-shield"></i>
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-file-shield"></i>
+                    </div>
 
                     <h3>No policies found</h3>
 
@@ -65,15 +58,20 @@
                             No policies have been added yet.
                         @endif
                     </p>
+
+                    @if (Auth::user()->hasPermission('policy.create'))
+                        <a href="{{ route('newPolicy') }}" class="btn-primary-custom">
+                            <i class="fa-solid fa-plus"></i> Create Policy
+                        </a>
+                    @endif
                 </div>
             @else
-                <div class="table-wrap">
-                    <table>
+                <div class="table-responsive">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Title</th>
-                                <th>Customer Policy</th>
-                                <th>Administrator Policy</th>
+                                <th>Applicable To</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -86,31 +84,23 @@
                                     </td>
 
                                     <td>
-                                        <span class="table-preview">
-                                            {{ Str::limit(strip_tags($policy->applicable_to_customer), 90) }}
-                                        </span>
-                                    </td>
+                                        <div class="badge-group">
+                                            @if ($policy->applicable_to_customer === true)
+                                                <span class="status-pill completed">Customer</span>
+                                            @endif
 
-                                    <td>
-                                        <span class="table-preview">
-                                            {{ Str::limit(strip_tags($policy->applicable_to_administrator), 90) }}
-                                        </span>
+                                            @if ($policy->applicable_to_administrator === true)
+                                                <span class="status-pill pending">Administrator</span>
+                                            @endif
+                                        </div>
                                     </td>
 
                                     <td class="text-end">
                                         <div class="table-actions">
-                                            <a class="table-action" {{-- href="{{ route('policiesShow', $policy) }}" --}} title="View policy">
-                                                <i class="fa-solid fa-eye"></i>
+                                            <a class="btn-primary-custom"
+                                                href="{{ route('viewPolicy', ['slug' => $policy->slug]) }}">
+                                                <i class="fa-solid fa-eye"></i> View
                                             </a>
-
-                                            <a class="table-action" {{-- href="{{ route('policiesEdit', $policy) }}" --}} title="Edit policy">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </a>
-
-                                            <button type="button" class="table-action danger" {{-- data-delete-url="{{ route('policiesDestroy', $policy) }}" --}}
-                                                data-policy-title="{{ $policy->title }}">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -124,5 +114,26 @@
                 </div>
             @endif
         </div>
+    </div>
+
+    {{-- Back Home --}}
+    <div class="w-100 justify-content-center text-center mb-4">
+        <div class="w-100 justify-content-center text-center mb-4">
+            @switch($data['requestType'])
+                @case('all')
+                    {{ '' }}
+                @break
+
+                @case('search')
+                    <a class="btn btn-success" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
+                        Back
+                    </a>
+                @break
+
+                @default
+            @endswitch
+
+        </div>
+
     </div>
 @endsection

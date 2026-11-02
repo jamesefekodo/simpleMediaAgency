@@ -588,7 +588,7 @@ class AuthController extends Controller
         if (!$user) {
             return $this->accessDeniedLogout();
         }
-        if ($user->is_active === false) {
+        if ($user->is_active == false) {
             return view('utilities.pages.auth.inactiveAccount');
         } else {
             return $this->redirectToUserDashboard($user->account_type);

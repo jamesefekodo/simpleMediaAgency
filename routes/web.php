@@ -61,4 +61,5 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/config/policies/search', [SystemPolicyController::class, 'policies'])->name('policiesSearch');
     Route::get('admin/config/policy/create', [SystemPolicyController::class, 'newPolicy'])->name('newPolicy');
     Route::post('admin/config/policy/create/submit', [SystemPolicyController::class, 'addNewSystemPolicySubmit'])->name('addNewSystemPolicySubmit');
+    Route::get('admin/config/policy/view/{slug}', [SystemPolicyController::class, 'viewPolicy'])->name('viewPolicy');
 });

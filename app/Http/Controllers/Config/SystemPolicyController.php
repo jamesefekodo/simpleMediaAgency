@@ -92,6 +92,26 @@ class SystemPolicyController extends Controller
         return redirect()->route('policies')->with('success', 'Done!');
     }
 
+    public function viewPolicy($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.view'),
+            403
+        );
+
+        $policy = SystemPolicy::where('slug', $slug)->first();
+        if (!$policy) {
+            return redirect()->back()->with('error', 'Policy not found!');
+        }
+
+        $data = [
+            'policy' => $policy,
+        ];
+        return view('users.admin.config.systemPolicy.viewSystemPolicy', compact('data'));
+    }
     public function manageSystemPolicyAgreement()
     {
         $user = Auth::user();
