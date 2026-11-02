@@ -10,7 +10,8 @@
       <nav class="sidebar-nav">
           <div class="sidebar-label">Overview</div>
 
-          <a class="sidebar-link active" href="{{ route('adminDashboard') }}">
+          <a class="sidebar-link {{ Str::startsWith(request()->path(), 'admin/dashboard') ? 'active' : '' }}"
+              href="{{ route('adminDashboard') }}">
               <i class="fa-solid fa-chart-pie"></i> Dashboard
           </a>
 
@@ -19,6 +20,32 @@
           </a>
 
           <div class="sidebar-label">Commerce</div>
+          <div class="nav-item">
+              <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <i class="fa-solid fa-store"></i>
+                  Shop
+                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+              </button>
+
+              <div class="nav-dropdown">
+                  <div class="nav-dropdown-items">
+
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-truck-fast"></i> Orders
+                      </a>
+
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-cubes"></i> Products
+                      </a>
+
+                      @if (Auth::user()->hasPermission('product_category.read'))
+                          <a class="nav-sub-link" href="{{ route('productCategories') }}">
+                              <i class="fa-solid fa-folder-tree"></i> Categories
+                          </a>
+                      @endif
+                  </div>
+              </div>
+          </div>
 
           <div class="nav-item">
               <button class="nav-dropdown-button" type="button" aria-expanded="false">

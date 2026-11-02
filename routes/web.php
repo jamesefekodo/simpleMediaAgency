@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Config\PolicyController;
 use App\Http\Controllers\Config\SystemPolicyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Shop\ShopManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -56,6 +57,13 @@ Route::middleware(['authenticationMiddlewares', 'memberMiddlewares'])->group(fun
 Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(function () {
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard'])->name('adminDashboard');
 
+    // shop
+    // product categories
+    Route::get('admin/shop/categories', [ShopManagementController::class, 'productCategories'])->name('productCategories');
+    Route::get('admin/shop/categories/search', [ShopManagementController::class, 'productCategories'])->name('productCategoriesSearch');
+
+
+
     // policies
     Route::get('admin/config/policies', [SystemPolicyController::class, 'policies'])->name('policies');
     Route::get('admin/config/policies/search', [SystemPolicyController::class, 'policies'])->name('policiesSearch');
@@ -64,6 +72,4 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/config/policy/view/{slug}', [SystemPolicyController::class, 'viewPolicy'])->name('viewPolicy');
     Route::get('admin/config/policy/edit/{slug}', [SystemPolicyController::class, 'editPolicy'])->name('editPolicy');
     Route::put('admin/config/policy/update/{slug}', [SystemPolicyController::class, 'updateSystemPolicy'])->name('updateSystemPolicy');
-
-
 });
