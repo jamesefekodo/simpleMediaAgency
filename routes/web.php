@@ -61,7 +61,10 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     // product categories
     Route::get('admin/shop/categories', [ShopManagementController::class, 'productCategories'])->name('productCategories');
     Route::get('admin/shop/categories/search', [ShopManagementController::class, 'productCategories'])->name('productCategoriesSearch');
-
+    Route::post('admin/shop/categories/add/submit', [ShopManagementController::class, 'addNewProductCategorySubmit'])->name('addNewProductCategorySubmit');
+    Route::get('admin/shop/categories/view/{slug}', [ShopManagementController::class, 'viewProductCategory'])->name('viewProductCategories');
+    Route::put('admin/shop/categories/update/{slug}', [ShopManagementController::class, 'updateProductCategory'])->name('updateProductCategories');
+    Route::get('admin/shop/categories/delete/{slug}', [ShopManagementController::class, 'deleteProductCategory'])->name('deleteProductCategory');
 
 
     // policies
@@ -72,4 +75,5 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/config/policy/view/{slug}', [SystemPolicyController::class, 'viewPolicy'])->name('viewPolicy');
     Route::get('admin/config/policy/edit/{slug}', [SystemPolicyController::class, 'editPolicy'])->name('editPolicy');
     Route::put('admin/config/policy/update/{slug}', [SystemPolicyController::class, 'updateSystemPolicy'])->name('updateSystemPolicy');
+    Route::get('admin/config/policy/delete/{slug}', [SystemPolicyController::class, 'deletePolicy'])->name('deletePolicy');
 });

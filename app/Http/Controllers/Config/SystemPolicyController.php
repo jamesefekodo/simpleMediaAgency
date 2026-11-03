@@ -174,6 +174,32 @@ class SystemPolicyController extends Controller
 
         return redirect()->route('policies')->with('success', 'Done!');
     }
+    public function deletePolicy($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('policy.delete'),
+            403
+        );
+
+        $policy = SystemPolicy::where('slug', $slug)->first();
+        if (!$policy) {
+            return redirect()->back()->with('error', 'Policy not found!');
+        }
+
+        $existingAgreements = UserAgreedPolicy::where('policy', $policy->slug)->get();
+        $existingAgreements->each(function ($agreement) {
+            $agreement->delete();
+        });
+
+        // Delete the policy
+        $policy->delete();
+
+
+        return redirect()->route('policies')->with('success', 'Policy deleted successfully!');
+    }
     public function manageSystemPolicyAgreement()
     {
         $user = Auth::user();

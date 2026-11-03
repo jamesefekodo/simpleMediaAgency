@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 class ShopManagementController extends Controller
 {
-    public function manageProductCategories(Request $request)
+    public function productCategories(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -23,12 +23,12 @@ class ShopManagementController extends Controller
         $requestType = '';
         $searchKey = '';
         $pageTitle = '';
-        $systemPolicies = '';
+        $productCategories = '';
 
 
         if (Route::currentRouteName() == 'productCategoriesSearch') {
             $searchKey = $request->input('searchKey');
-            $systemPolicies = ProductCategory::where('name', 'like', "%$searchKey%")
+            $productCategories = ProductCategory::where('name', 'like', "%$searchKey%")
                 ->orWhere('description', 'like', "%$searchKey%")
                 ->orderBy('name')
                 ->paginate(20)->withQueryString();
@@ -36,7 +36,7 @@ class ShopManagementController extends Controller
             $requestType = 'search';
             $pageTitle = 'Search Results :: ' . $searchKey;
         } else {
-            $systemPolicies = ProductCategory::orderBy('name')->paginate(20);
+            $productCategories = ProductCategory::orderBy('name')->paginate(20);
             $requestType = 'all';
             $pageTitle = 'Product Categories';
         }
@@ -45,10 +45,95 @@ class ShopManagementController extends Controller
             'requestType' => $requestType,
             'searchKey' => $searchKey,
             'pageTitle' => $pageTitle,
-            'systemPolicies' => $systemPolicies,
+            'productCategories' => $productCategories,
         ];
 
 
-        // return view('users.admin.shop.productCategories');
+        return view('users.admin.shop.categories.productCategories', compact('data'));
+    }
+
+    public function addNewProductCategorySubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product_category.create'),
+            403
+        );
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:product_categories,name',
+            'description' => 'nullable|string',
+        ]);
+
+        ProductCategory::create($validatedData);
+
+        return redirect()->back()->with('success', 'New product category added successfully.');
+    }
+    public function viewProductCategory($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product_category.read'),
+            403
+        );
+
+        $category = ProductCategory::where('slug', $slug)->first();
+        if (!$category) {
+           return redirect()->route('productCategories')->with('error', 'Product category not found.');
+        }
+
+        $data = [
+            'category' => $category,
+        ];
+
+        return view('users.admin.shop.categories.viewProductCategory', compact('data'));
+    }
+    public function updateProductCategory(Request $request, $slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product_category.update'),
+            403
+        );
+
+        $category = ProductCategory::where('slug', $slug)->first();
+        if (!$category) {
+            return redirect()->route('productCategories')->with('error', 'Product category not found.');
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:product_categories,name,' . $category->id,
+            'description' => 'nullable|string',
+        ]);
+
+        $category->update($validatedData);
+
+        return redirect()->back()->with('success', 'Product category updated successfully.');
+    }
+    public function deleteProductCategory($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product_category.delete'),
+            403
+        );
+
+        $category = ProductCategory::where('slug', $slug)->first();
+        if (!$category) {
+            return redirect()->route('productCategories')->with('error', 'Product category not found.');
+        }
+
+
+        // $category->delete();
+
+        return redirect()->route('productCategories')->with('success', 'Product category deleted successfully.');
     }
 }
