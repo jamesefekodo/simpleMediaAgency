@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Brand;
+use App\Models\Shop\Colour;
 use App\Models\Shop\ProductCategory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
@@ -390,5 +391,94 @@ class ShopManagementController extends Controller
         }
 
         return redirect()->back()->with('success', 'Brand updated successfully.');
+    }
+    public function deleteBrand($slug)
+    {
+        //
+    }
+    public function colours(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('colour.read'),
+            403
+        );
+
+        $requestType = '';
+        $searchKey = '';
+        $pageTitle = '';
+        $colours = '';
+
+
+        if (Route::currentRouteName() == 'coloursSearch') {
+            $searchKey = $request->input('searchKey');
+            $colours = Colour::where('hex_code', 'like', "%$searchKey%")
+                ->orWhere('name', 'like', "%$searchKey%")
+                ->orderBy('name')
+                ->paginate(20)->withQueryString();
+
+            $requestType = 'search';
+            $pageTitle = 'Search Results :: ' . $searchKey;
+        } else {
+            $colours = Colour::orderBy('name')->paginate(20);
+            $requestType = 'all';
+            $pageTitle = 'Colours';
+        }
+
+        $data = [
+            'requestType' => $requestType,
+            'searchKey' => $searchKey,
+            'pageTitle' => $pageTitle,
+            'colours' => $colours,
+        ];
+
+
+        return view('users.admin.shop.colours.colours', compact('data'));
+    }
+    public function addNewColourSubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('colour.create'),
+            403
+        );
+
+        $validatedData = $request->validate([
+            'hex_code' => 'required|string|max:7|unique:colours,hex_code',
+            'name' => 'required|string|max:255|unique:colours,name',
+        ]);
+
+
+        Colour::create($validatedData);
+
+        return redirect()->back()->with('success', 'New colour added successfully.');
+    }
+    public function updateColourSubmit(Request $request, $id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('colour.update'),
+            403
+        );
+
+        $colour = Colour::where('id', $id)->first();
+        if (!$colour) {
+            return redirect()->route('colours')->with('error', 'Colour not found.');
+        }
+
+        $validatedData = $request->validate([
+            'hex_code' => 'required|string|max:7|unique:colours,hex_code,' . $colour->id,
+            'name' => 'required|string|max:255|unique:colours,name,' . $colour->id,
+        ]);
+
+        $colour->update($validatedData);
+
+        return redirect()->back()->with('success', 'Colour updated successfully.');
     }
 }

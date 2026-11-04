@@ -76,6 +76,9 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     // colours
     Route::get('admin/shop/colours', [ShopManagementController::class, 'colours'])->name('colours');
     Route::get('admin/shop/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
+    Route::post('admin/shop/colours/add/submit', [ShopManagementController::class, 'addNewColourSubmit'])->name('addNewColourSubmit');
+    Route::put('admin/shop/colours/update/{id}', [ShopManagementController::class, 'updateColourSubmit'])->name('updateColourSubmit');
+
 
 
     // policies
