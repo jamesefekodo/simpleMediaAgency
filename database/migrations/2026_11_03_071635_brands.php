@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('brand');
             $table->text('description')->nullable();
-            $table->string('logo');
+            $table->string('logo')->nullable();
             $table->timestamps();
         });
     }

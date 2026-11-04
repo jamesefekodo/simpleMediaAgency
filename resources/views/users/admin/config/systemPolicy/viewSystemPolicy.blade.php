@@ -37,9 +37,7 @@
                     @endif
 
                     @if (Auth::user()->hasPermission('policy.delete'))
-                        <button type="button" class="btn-danger-custom delete-record"
-                        {{-- data-url="{{ route('deletePolicy', ['slug' => $data['policy']->slug]) }}" --}}
-                        >
+                        <button type="button" class="btn-danger-custom delete-record" {{-- data-url="{{ route('deletePolicy', ['slug' => $data['policy']->slug]) }}" --}}>
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
                     @endif
@@ -135,4 +133,14 @@
             });
         </script>
     </div>
+
+    {{-- Back Home --}}
+    <div class="w-100 justify-content-center text-center mb-4">
+        <div class="w-100 justify-content-center text-center mb-4">
+            <a class="btn btn-primary" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
+                Back
+            </a>
+        </div>
+    </div>
+
 @endsection

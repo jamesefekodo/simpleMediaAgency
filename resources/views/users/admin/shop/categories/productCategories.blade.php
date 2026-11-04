@@ -86,7 +86,7 @@
                                         <strong>{{ $category->name }}</strong>
                                     </td>
                                     <td>
-                                        {{ $category->description }}
+                                        {!! \Illuminate\Support\Str::words(strip_tags(html_entity_decode($category->description)), 10, '...') !!}
                                     </td>
                                     <td>
                                         {{-- {{ $category->products->count() }} --}}
@@ -121,7 +121,7 @@
                 @break
 
                 @case('search')
-                    <a class="btn btn-success" href="{{ route('productCategories') }}"> <i class="fas fa-chevron-left"></i>
+                    <a class="btn btn-primary" href="{{ route('productCategories') }}"> <i class="fas fa-chevron-left"></i>
                         Back
                     </a>
                 @break

@@ -39,7 +39,7 @@
 
                     @if (Auth::user()->hasPermission('product_category.delete'))
                         <button type="button" class="btn-danger-custom delete-record"
-                        data-url="{{ route('deleteProductCategory', ['slug' => $data['category']->slug]) }}">
+                            data-url="{{ route('deleteProductCategory', ['slug' => $data['category']->slug]) }}">
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
                     @endif
@@ -61,7 +61,7 @@
                     </span>
                 </div>
 
-                <div class="detail-field">
+                {{-- <div class="detail-field">
                     <span class="detail-label">Created At</span>
                     <span class="detail-value">
                         {{ $data['category']->created_at->format('l, j F, Y \a\t g:i A') }}
@@ -73,7 +73,7 @@
                     <span class="detail-value">
                         {{ $data['category']->updated_at->format('l, j F, Y \a\t g:i A') }}
                     </span>
-                </div>
+                </div> --}}
             </div>
 
             <div class="detail-section">
@@ -111,4 +111,16 @@
             });
         </script>
     </div>
+
+
+    {{-- Back Home --}}
+    <div class="w-100 justify-content-center text-center mb-4">
+        <div class="w-100 justify-content-center text-center mb-4">
+            <a class="btn btn-primary" href="{{ route('productCategories') }}"> <i class="fas fa-chevron-left"></i>
+                Back
+            </a>
+        </div>
+
+    </div>
+
 @endsection

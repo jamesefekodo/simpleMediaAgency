@@ -63,8 +63,16 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/categories/search', [ShopManagementController::class, 'productCategories'])->name('productCategoriesSearch');
     Route::post('admin/shop/categories/add/submit', [ShopManagementController::class, 'addNewProductCategorySubmit'])->name('addNewProductCategorySubmit');
     Route::get('admin/shop/categories/view/{slug}', [ShopManagementController::class, 'viewProductCategory'])->name('viewProductCategories');
-    Route::put('admin/shop/categories/update/{slug}', [ShopManagementController::class, 'updateProductCategory'])->name('updateProductCategories');
+    Route::put('admin/shop/categories/update/{slug}', [ShopManagementController::class, 'updateProductCategory'])->name('updateProductCategory');
     Route::get('admin/shop/categories/delete/{slug}', [ShopManagementController::class, 'deleteProductCategory'])->name('deleteProductCategory');
+
+    // brands
+    Route::get('admin/shop/brands', [ShopManagementController::class, 'brands'])->name('brands');
+    Route::get('admin/shop/brands/search', [ShopManagementController::class, 'brands'])->name('brandsSearch');
+    Route::post('admin/shop/brands/add/submit', [ShopManagementController::class, 'addNewBrandSubmit'])->name('addNewBrandSubmit');
+    Route::get('admin/shop/brands/view/{slug}', [ShopManagementController::class, 'viewBrands'])->name('viewBrands');
+    Route::put('admin/shop/brands/update/{slug}', [ShopManagementController::class, 'updateBrandSubmit'])->name('updateBrandSubmit');
+
 
 
     // policies

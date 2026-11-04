@@ -21,7 +21,8 @@
 
           <div class="sidebar-label">Commerce</div>
           <div class="nav-item">
-              <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop') ? 'active' : '' }}" type="button" aria-expanded="false">
+              <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop') ? 'active' : '' }}"
+                  type="button" aria-expanded="false">
                   <i class="fa-solid fa-store"></i>
                   Shop
                   <i class="fa-solid fa-chevron-down dropdown-caret"></i>
@@ -39,10 +40,22 @@
                       </a>
 
                       @if (Auth::user()->hasPermission('product_category.read'))
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/categories') ? 'active' : '' }}" href="{{ route('productCategories') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/categories') ? 'active' : '' }}"
+                              href="{{ route('productCategories') }}">
                               <i class="fa-solid fa-folder-tree"></i> Categories
                           </a>
                       @endif
+                      @if (Auth::user()->hasPermission('brands.read'))
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/brand') ? 'active' : '' }}" href="{{ route('brands') }}">
+                              <i class="fa-solid fa-tags"></i> Brands
+                          </a>
+                      @endif
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-ruler-combined"></i> Attributes
+                      </a>
+                      <a class="nav-sub-link" href="#">
+                          <i class="fa-solid fa-palette"></i> Colors
+                      </a>
                   </div>
               </div>
           </div>

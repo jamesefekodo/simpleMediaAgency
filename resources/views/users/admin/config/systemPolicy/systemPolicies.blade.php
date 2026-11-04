@@ -125,7 +125,7 @@
                 @break
 
                 @case('search')
-                    <a class="btn btn-success" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
+                    <a class="btn btn-primary" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
                         Back
                     </a>
                 @break

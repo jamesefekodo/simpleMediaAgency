@@ -160,7 +160,7 @@
     {{-- Back Home --}}
     <div class="w-100 justify-content-center text-center mb-4">
         <div class="w-100 justify-content-center text-center mb-4">
-            <a class="btn btn-success" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
+            <a class="btn btn-primary" href="{{ route('policies') }}"> <i class="fas fa-chevron-left"></i>
                 Back
             </a>
 

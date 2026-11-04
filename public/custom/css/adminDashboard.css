@@ -1146,3 +1146,69 @@ textarea.form-input {
         justify-content: center;
     }
 }
+
+.image-upload-box {
+    position: relative;
+    width: 100%;
+    min-height: 180px;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    background: var(--panel-soft);
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.image-upload-box:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.image-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-preview {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.image-placeholder i {
+    font-size: 28px;
+    color: var(--primary);
+}
+
+.image-placeholder p {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.image-placeholder span {
+    font-size: 12px;
+}
+.brand-logo-a {
+    width: 80px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 8px;
+    border-radius: 8px;
+}
