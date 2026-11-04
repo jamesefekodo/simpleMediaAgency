@@ -73,6 +73,9 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/brands/view/{slug}', [ShopManagementController::class, 'viewBrands'])->name('viewBrands');
     Route::put('admin/shop/brands/update/{slug}', [ShopManagementController::class, 'updateBrandSubmit'])->name('updateBrandSubmit');
 
+    // colours
+    Route::get('admin/shop/colours', [ShopManagementController::class, 'colours'])->name('colours');
+    Route::get('admin/shop/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
 
 
     // policies

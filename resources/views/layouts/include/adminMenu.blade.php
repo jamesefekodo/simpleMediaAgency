@@ -53,8 +53,8 @@
                       <a class="nav-sub-link" href="#">
                           <i class="fa-solid fa-ruler-combined"></i> Attributes
                       </a>
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-palette"></i> Colors
+                      <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/colours') ? 'active' : '' }}" href="{{ route('colours') }}">
+                          <i class="fa-solid fa-palette"></i> Colours
                       </a>
                   </div>
               </div>
