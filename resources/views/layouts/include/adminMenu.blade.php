@@ -51,17 +51,10 @@
                               <i class="fa-solid fa-tags"></i> Brands
                           </a>
                       @endif
-                      @if (Auth::user()->hasPermission('colour.read'))
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/colours') ? 'active' : '' }}"
-                              href="{{ route('colours') }}">
-                              <i class="fa-solid fa-palette"></i> Colours
-                          </a>
-                      @endif
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-ruler-combined"></i> Weight
-                      </a>
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-ruler-combined"></i> Other Attributes
+
+                      <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/attributes') ? 'active' : '' }}"
+                          href="{{ route('colours') }}">
+                          <i class="fa-solid fa-ruler-combined"></i> Attributes
                       </a>
                   </div>
               </div>

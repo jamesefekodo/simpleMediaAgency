@@ -1213,10 +1213,10 @@ textarea.form-input {
     margin-bottom: 8px;
     border-radius: 8px;
 }
-   .colour-code-input {
-    font-family: 'Space Grotesk', sans-serif;
+.colour-code-input {
+    font-family: "Space Grotesk", sans-serif;
     font-weight: 600;
-    letter-spacing: .04em;
+    letter-spacing: 0.04em;
 }
 
 .colour-picker {
@@ -1227,4 +1227,25 @@ textarea.form-input {
     border-radius: 12px;
     background: var(--panel-soft);
     cursor: pointer;
+}
+
+/* MINI MENU */
+.mini-menu {
+    background-color: #ffffff;
+    color: var(--primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 5px;
+    margin: 5px;
+    font-size: 25px;
+}
+
+.profile-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mini-menu-active {
+    background: var(--primary);
+    color: #fff;
 }

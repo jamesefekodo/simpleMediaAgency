@@ -17,7 +17,7 @@
             placeholder="Search colours..." aria-label="Search colours">
     </form>
 
-    @if (Auth::user()->hasPermission('colour.create'))
+    @if (Auth::user()->hasPermission('colour.manage'))
         <button type="button" class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addNewColourModal">
             <i class="fa-solid fa-plus"></i> Add Colour
         </button>
@@ -25,8 +25,13 @@
 @endsection
 
 @section('content')
-    <div class="content">
-        <div class="panel">
+    <div class="content row">
+        {{-- ################################# --}}
+        <div class="col-md-1 individual-review-card">
+            @include('users.admin/shop.colours.include.attributeSideMenu')
+        </div>
+        {{-- ################################### --}}
+        <div class="panel col-md-11">
             <div class="panel-header">
                 <div>
                     <h3>Colours</h3>
@@ -59,7 +64,7 @@
                         @endif
                     </p>
 
-                    @if (Auth::user()->hasPermission('colour.create'))
+                    @if (Auth::user()->hasPermission('colour.manage'))
                         <button type="button" class="btn-primary-custom" data-bs-toggle="modal"
                             data-bs-target="#addNewColourModal">
                             <i class="fa-solid fa-plus"></i> Add Colour
@@ -100,14 +105,15 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="table-actions">
-                                            @if (Auth::user()->hasPermission('colour.update'))
+                                            @if (Auth::user()->hasPermission('colour.manage'))
                                                 <button type="button" class="btn btn-warning rounded btn-sm"
-                                                    data-bs-toggle="modal" data-bs-target="#editColourModal-{{ $colour->id }}">
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editColourModal-{{ $colour->id }}">
                                                     <i class="fa-solid fa-edit"></i> Edit
                                                 </button>
                                             @endif
 
-                                            @if (Auth::user()->hasPermission('colour.delete'))
+                                            @if (Auth::user()->hasPermission('colour.manage'))
                                                 <button type="button" class="btn btn-danger rounded btn-sm"
                                                     data-bs-toggle="modal" data-bs-target="#deleteColourModal">
                                                     <i class="fa-solid fa-trash"></i> Delete

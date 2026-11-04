@@ -74,11 +74,14 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::put('admin/shop/brands/update/{slug}', [ShopManagementController::class, 'updateBrandSubmit'])->name('updateBrandSubmit');
 
     // colours
-    Route::get('admin/shop/colours', [ShopManagementController::class, 'colours'])->name('colours');
-    Route::get('admin/shop/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
-    Route::post('admin/shop/colours/add/submit', [ShopManagementController::class, 'addNewColourSubmit'])->name('addNewColourSubmit');
-    Route::put('admin/shop/colours/update/{id}', [ShopManagementController::class, 'updateColourSubmit'])->name('updateColourSubmit');
+    Route::get('admin/shop/attributes/colours', [ShopManagementController::class, 'colours'])->name('colours');
+    Route::get('admin/shop/attributes/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
+    Route::post('admin/shop/attributes/colours/add/submit', [ShopManagementController::class, 'addNewColourSubmit'])->name('addNewColourSubmit');
+    Route::put('admin/shop/attributes/colours/update/{id}', [ShopManagementController::class, 'updateColourSubmit'])->name('updateColourSubmit');
 
+    // weights
+    Route::get('admin/shop/attributes/weights', [ShopManagementController::class, 'weights'])->name('weights');
+    Route::get('admin/shop/attributes/weights/search', [ShopManagementController::class, 'weights'])->name('weightsSearch');
 
 
     // policies

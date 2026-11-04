@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop\Brand;
 use App\Models\Shop\Colour;
 use App\Models\Shop\ProductCategory;
+use App\Models\Shop\Weight;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -402,7 +403,7 @@ class ShopManagementController extends Controller
         $user = Auth::user();
 
         abort_unless(
-            $user->hasPermission('colour.read'),
+            $user->hasPermission('colour.manage'),
             403
         );
 
@@ -443,7 +444,7 @@ class ShopManagementController extends Controller
         $user = Auth::user();
 
         abort_unless(
-            $user->hasPermission('colour.create'),
+            $user->hasPermission('colour.manage'),
             403
         );
 
@@ -463,7 +464,7 @@ class ShopManagementController extends Controller
         $user = Auth::user();
 
         abort_unless(
-            $user->hasPermission('colour.update'),
+            $user->hasPermission('colour.manage'),
             403
         );
 
@@ -480,5 +481,50 @@ class ShopManagementController extends Controller
         $colour->update($validatedData);
 
         return redirect()->back()->with('success', 'Colour updated successfully.');
+    }
+    public function weights(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('weight.manage'),
+            403
+        );
+
+        $requestType = '';
+        $searchKey = '';
+        $pageTitle = '';
+        $weights = '';
+
+
+        if (Route::currentRouteName() == 'weightsSearch') {
+            $searchKey = $request->input('searchKey');
+            $weights = Weight::where('name', 'like', "%$searchKey%")
+                ->orWhere('min_weight', 'like', "%$searchKey%")
+                ->orWhere('max_weight', 'like', "%$searchKey%")
+                ->orWhere('is_active', 'like', "%$searchKey%")
+                ->orderBy('name')
+                ->paginate(20)->withQueryString();
+
+
+
+            $requestType = 'search';
+            $pageTitle = 'Search Results :: ' . $searchKey;
+        } else {
+            $weights = Weight::orderBy('name')->paginate(20);
+            $requestType = 'all';
+            $pageTitle = 'Weights';
+        }
+
+        $data = [
+            'requestType' => $requestType,
+            'searchKey' => $searchKey,
+            'pageTitle' => $pageTitle,
+            'wei$weights' => $weights,
+        ];
+
+
+        return view('users.admin.shop.weights.weights', compact('data'));
     }
 }
