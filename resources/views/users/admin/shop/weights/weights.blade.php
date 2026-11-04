@@ -54,20 +54,20 @@
                         <i class="fa-solid fa-file-shield"></i>
                     </div>
 
-                    <h3>No colours found</h3>
+                    <h3>No weight found</h3>
 
                     <p>
                         @if ($data['requestType'] === 'search')
-                            No colours match “{{ $data['searchKey'] }}”.
+                            No weight match “{{ $data['searchKey'] }}”.
                         @else
-                            No colours have been added yet.
+                            No weight have been added yet.
                         @endif
                     </p>
 
-                    @if (Auth::user()->hasPermission('colour.manage'))
+                    @if (Auth::user()->hasPermission('weight.manage'))
                         <button type="button" class="btn-primary-custom" data-bs-toggle="modal"
-                            data-bs-target="#addNewColourModal">
-                            <i class="fa-solid fa-plus"></i> Add Colour
+                            data-bs-target="#addNewWeightModal">
+                            <i class="fa-solid fa-plus"></i> Add Weight
                         </button>
                     @endif
                 </div>
@@ -78,7 +78,7 @@
                             <tr>
                                 <th>S/N</th>
                                 <th>Name</th>
-                                <th>Colour</th>
+                                <th>Range (kg)</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -87,39 +87,27 @@
                             @foreach ($data['weights'] as $weight)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    {{-- <td>{{ $colour->name }}</td>
-                                    <td>
-                                        @php
-                                            $hex = preg_match('/^#[0-9A-Fa-f]{6}$/', $colour->hex_code)
-                                                ? $colour->hex_code
-                                                : '#000000';
-                                        @endphp
+                                    <td>{{ $weight->name }}</td>
+                                    <td>{{ $weight->min_weight }} - {{ $weight->max_weight }}</td>
 
-                                        <div style="display:flex; align-items:center; gap:8px;">
-
-                                            <span
-                                                style="width:60px; height:25px; background-color: {{ $hex }}; border:1px solid #ccc; display:inline-block;">
-                                            </span>
-                                            {{ $hex }}
-                                        </div>
-                                    </td>
                                     <td class="text-end">
                                         <div class="table-actions">
-                                            @if (Auth::user()->hasPermission('colour.manage'))
+                                            @if (Auth::user()->hasPermission('weight.manage'))
                                                 <button type="button" class="btn btn-warning rounded btn-sm"
-                                                    data-bs-toggle="modal" data-bs-target="#editColourModal-{{ $colour->id }}">
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editWeightModal-{{ $weight->id }}">
                                                     <i class="fa-solid fa-edit"></i> Edit
                                                 </button>
                                             @endif
 
-                                            @if (Auth::user()->hasPermission('colour.manage'))
+                                            @if (Auth::user()->hasPermission('weight.manage'))
                                                 <button type="button" class="btn btn-danger rounded btn-sm"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteColourModal">
+                                                    {{-- data-bs-toggle="modal" data-bs-target="#deleteColourModal" --}}>
                                                     <i class="fa-solid fa-trash"></i> Delete
                                                 </button>
                                             @endif
                                         </div>
-                                    </td> --}}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -155,12 +143,13 @@
     </div>
 
     {{-- modals start --}}
-    {{-- @include('users.admin.shop.colours.include.createNewColourModal')
+    @include('users.admin.shop.weights.include.createNewWeightModal')
 
-    @if ($data['colours']->isNotEmpty())
-        @foreach ($data['colours'] as $colour)
-            @include('users.admin.shop.colours.include.editColourModal')
+
+    @if ($data['weights']->isNotEmpty())
+        @foreach ($data['weights'] as $weight)
+            @include('users.admin.shop.weights.include.editWeightModal')
         @endforeach
-    @endif --}}
+    @endif
 
 @endsection

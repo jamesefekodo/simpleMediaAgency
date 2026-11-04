@@ -521,10 +521,55 @@ class ShopManagementController extends Controller
             'requestType' => $requestType,
             'searchKey' => $searchKey,
             'pageTitle' => $pageTitle,
-            'wei$weights' => $weights,
+            'weights' => $weights,
         ];
 
 
         return view('users.admin.shop.weights.weights', compact('data'));
+    }
+    public function addNewWeightSubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('weight.manage'),
+            403
+        );
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:weights,name',
+            'min_weight' => 'required|numeric',
+            'max_weight' => 'required|numeric|gt:min_weight',
+        ]);
+
+        Weight::create($validatedData);
+
+        return redirect()->back()->with('success', 'New weight added successfully.');
+    }
+    public function updateWeightSubmit(Request $request, $id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('weight.manage'),
+            403
+        );
+
+        $weight = Weight::where('id', $id)->first();
+        if (!$weight) {
+            return redirect()->route('weights')->with('error', 'Weight not found.');
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:weights,name,' . $weight->id,
+            'min_weight' => 'required|numeric',
+            'max_weight' => 'required|numeric|gt:min_weight',
+        ]);
+
+        $weight->update($validatedData);
+
+        return redirect()->back()->with('success', 'Weight updated successfully.');
     }
 }

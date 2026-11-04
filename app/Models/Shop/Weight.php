@@ -13,6 +13,6 @@ class Weight extends Model
         'name',
         'min_weight',
         'max_weight',
-        'is_active'
+        // 'is_active'
     ];
 }

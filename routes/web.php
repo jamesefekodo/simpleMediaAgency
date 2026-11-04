@@ -82,6 +82,8 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     // weights
     Route::get('admin/shop/attributes/weights', [ShopManagementController::class, 'weights'])->name('weights');
     Route::get('admin/shop/attributes/weights/search', [ShopManagementController::class, 'weights'])->name('weightsSearch');
+    Route::post('admin/shop/attributes/weights/add/submit', [ShopManagementController::class, 'addNewWeightSubmit'])->name('addNewWeightSubmit');
+    Route::put('admin/shop/attributes/weights/update/{id}', [ShopManagementController::class, 'updateWeightSubmit'])->name('updateWeightSubmit');
 
 
     // policies
