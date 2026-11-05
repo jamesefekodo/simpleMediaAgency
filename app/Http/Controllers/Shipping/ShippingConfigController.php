@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Shipping;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShippingAddress\Location;
+use App\Models\ShippingAddress\ShippingRate;
+use App\Models\ShippingAddress\ShippingSurcharge;
+use App\Models\ShippingAddress\ShippingZone;
+use App\Models\Shop\Weight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -187,5 +191,47 @@ class ShippingConfigController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Location deleted successfully.');
+    }
+
+    public function shippingRates(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $selectedZoneId = $request->get('zone');
+
+        $zones = ShippingZone::orderBy('name')->get();
+
+        $weights = Weight::orderBy('name')->get();
+
+        $surcharges = ShippingSurcharge::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $rates = ShippingRate::query()
+            ->with(['shippingZone', 'weight', 'surcharges'])
+            ->when($selectedZoneId, function ($query) use ($selectedZoneId) {
+                $query->where('shipping_zone_id', $selectedZoneId);
+            })
+            ->orderBy('shipping_zone_id')
+            ->orderBy('weight_id')
+            ->paginate(20)
+            ->withQueryString();
+
+        $data = [
+            'pageTitle' => 'Shipping Rates',
+            'zones' => $zones,
+            'weights' => $weights,
+            'surcharges' => $surcharges,
+            'rates' => $rates,
+            'selectedZoneId' => $selectedZoneId,
+        ];
+
+        return view('users.admin.shipping.shippingConfig.rates.shippingRates', compact('data'));
     }
 }

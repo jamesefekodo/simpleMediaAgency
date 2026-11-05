@@ -21,7 +21,7 @@
 
           <div class="sidebar-label">Commerce</div>
           <div class="nav-item">
-              <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop') ? 'active' : '' }}"
+              <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/product') ? 'active' : '' }}"
                   type="button" aria-expanded="false">
                   <i class="fa-solid fa-store"></i>
                   Shop
@@ -40,19 +40,19 @@
                       </a>
 
                       @if (Auth::user()->hasPermission('product_category.read'))
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/categories') ? 'active' : '' }}"
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/categories') ? 'active' : '' }}"
                               href="{{ route('productCategories') }}">
                               <i class="fa-solid fa-folder-tree"></i> Categories
                           </a>
                       @endif
                       @if (Auth::user()->hasPermission('brands.read'))
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/brand') ? 'active' : '' }}"
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/brand') ? 'active' : '' }}"
                               href="{{ route('brands') }}">
                               <i class="fa-solid fa-tags"></i> Brands
                           </a>
                       @endif
 
-                      <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/attributes') ? 'active' : '' }}"
+                      <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/attributes') ? 'active' : '' }}"
                           href="{{ route('colours') }}">
                           <i class="fa-solid fa-ruler-combined"></i> Attributes
                       </a>
@@ -62,7 +62,7 @@
 
           @if (Auth::user()->hasPermission('shipping_config.manage'))
               <div class="nav-item">
-                  <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                  <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/shipping') ? 'active' : '' }}" type="button" aria-expanded="false">
                       <i class="fa-solid fa-truck-fast"></i>
                       Shipping
                       <i class="fa-solid fa-chevron-down dropdown-caret"></i>
@@ -71,7 +71,7 @@
                   <div class="nav-dropdown">
                       <div class="nav-dropdown-items">
 
-                          <a class="nav-sub-link" href="{{ route('locations') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/locations') ? 'active' : '' }}" href="{{ route('locations') }}">
                               <i class="fa-solid fa-location-dot"></i> Locations
                           </a>
 
@@ -79,7 +79,7 @@
                               <i class="fa-solid fa-earth-africa"></i> Zones
                           </a>
 
-                          <a class="nav-sub-link" href="#">
+                          <a class="nav-sub-link" href="{{ route('shippingRates') }}">
                               <i class="fa-solid fa-calculator"></i> Rates
                           </a>
                       </div>

@@ -60,41 +60,41 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
 
     // shop
     // product categories
-    Route::get('admin/shop/categories', [ShopManagementController::class, 'productCategories'])->name('productCategories');
-    Route::get('admin/shop/categories/search', [ShopManagementController::class, 'productCategories'])->name('productCategoriesSearch');
-    Route::post('admin/shop/categories/add/submit', [ShopManagementController::class, 'addNewProductCategorySubmit'])->name('addNewProductCategorySubmit');
-    Route::get('admin/shop/categories/view/{slug}', [ShopManagementController::class, 'viewProductCategory'])->name('viewProductCategories');
-    Route::put('admin/shop/categories/update/{slug}', [ShopManagementController::class, 'updateProductCategory'])->name('updateProductCategory');
-    Route::get('admin/shop/categories/delete/{slug}', [ShopManagementController::class, 'deleteProductCategory'])->name('deleteProductCategory');
+    Route::get('admin/shop/product/categories', [ShopManagementController::class, 'productCategories'])->name('productCategories');
+    Route::get('admin/shop/product/categories/search', [ShopManagementController::class, 'productCategories'])->name('productCategoriesSearch');
+    Route::post('admin/shop/product/categories/add/submit', [ShopManagementController::class, 'addNewProductCategorySubmit'])->name('addNewProductCategorySubmit');
+    Route::get('admin/shop/product/categories/view/{slug}', [ShopManagementController::class, 'viewProductCategory'])->name('viewProductCategories');
+    Route::put('admin/shop/product/categories/update/{slug}', [ShopManagementController::class, 'updateProductCategory'])->name('updateProductCategory');
+    Route::get('admin/shop/product/categories/delete/{slug}', [ShopManagementController::class, 'deleteProductCategory'])->name('deleteProductCategory');
 
     // brands
-    Route::get('admin/shop/brands', [ShopManagementController::class, 'brands'])->name('brands');
-    Route::get('admin/shop/brands/search', [ShopManagementController::class, 'brands'])->name('brandsSearch');
-    Route::post('admin/shop/brands/add/submit', [ShopManagementController::class, 'addNewBrandSubmit'])->name('addNewBrandSubmit');
-    Route::get('admin/shop/brands/view/{slug}', [ShopManagementController::class, 'viewBrands'])->name('viewBrands');
-    Route::put('admin/shop/brands/update/{slug}', [ShopManagementController::class, 'updateBrandSubmit'])->name('updateBrandSubmit');
+    Route::get('admin/shop/product/brands', [ShopManagementController::class, 'brands'])->name('brands');
+    Route::get('admin/shop/product/brands/search', [ShopManagementController::class, 'brands'])->name('brandsSearch');
+    Route::post('admin/shop/product/brands/add/submit', [ShopManagementController::class, 'addNewBrandSubmit'])->name('addNewBrandSubmit');
+    Route::get('admin/shop/product/brands/view/{slug}', [ShopManagementController::class, 'viewBrands'])->name('viewBrands');
+    Route::put('admin/shop/product/brands/update/{slug}', [ShopManagementController::class, 'updateBrandSubmit'])->name('updateBrandSubmit');
 
     // colours
-    Route::get('admin/shop/attributes/colours', [ShopManagementController::class, 'colours'])->name('colours');
-    Route::get('admin/shop/attributes/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
-    Route::post('admin/shop/attributes/colours/add/submit', [ShopManagementController::class, 'addNewColourSubmit'])->name('addNewColourSubmit');
-    Route::put('admin/shop/attributes/colours/update/{id}', [ShopManagementController::class, 'updateColourSubmit'])->name('updateColourSubmit');
+    Route::get('admin/shop/product/attributes/colours', [ShopManagementController::class, 'colours'])->name('colours');
+    Route::get('admin/shop/product/attributes/colours/search', [ShopManagementController::class, 'colours'])->name('coloursSearch');
+    Route::post('admin/shop/product/attributes/colours/add/submit', [ShopManagementController::class, 'addNewColourSubmit'])->name('addNewColourSubmit');
+    Route::put('admin/shop/product/attributes/colours/update/{id}', [ShopManagementController::class, 'updateColourSubmit'])->name('updateColourSubmit');
 
     // weights
-    Route::get('admin/shop/attributes/weights', [ShopManagementController::class, 'weights'])->name('weights');
-    Route::get('admin/shop/attributes/weights/search', [ShopManagementController::class, 'weights'])->name('weightsSearch');
-    Route::post('admin/shop/attributes/weights/add/submit', [ShopManagementController::class, 'addNewWeightSubmit'])->name('addNewWeightSubmit');
-    Route::put('admin/shop/attributes/weights/update/{id}', [ShopManagementController::class, 'updateWeightSubmit'])->name('updateWeightSubmit');
-    Route::get('admin/shop/attributes/weights/delete/{id}', [ShopManagementController::class, 'deleteWeight'])->name('deleteWeight');
+    Route::get('admin/shop/product/attributes/weights', [ShopManagementController::class, 'weights'])->name('weights');
+    Route::get('admin/shop/product/attributes/weights/search', [ShopManagementController::class, 'weights'])->name('weightsSearch');
+    Route::post('admin/shop/product/attributes/weights/add/submit', [ShopManagementController::class, 'addNewWeightSubmit'])->name('addNewWeightSubmit');
+    Route::put('admin/shop/product/attributes/weights/update/{id}', [ShopManagementController::class, 'updateWeightSubmit'])->name('updateWeightSubmit');
+    Route::get('admin/shop/product/attributes/weights/delete/{id}', [ShopManagementController::class, 'deleteWeight'])->name('deleteWeight');
 
 
     // other attributes
-    Route::get('admin/shop/attributes/others', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributes');
-    Route::get('admin/shop/attributes/others/search', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributesSearch');
-    Route::post('admin/shop/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
-    Route::post('admin/shop/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
-    Route::put('admin/shop/attributes/others/update/{id}/submit', [ShopManagementController::class, 'updateAttributeSubmit'])->name('updateAttributeSubmit');
-    Route::get('admin/shop/attributes/others/delete/{id}/submit', [ShopManagementController::class, 'deleteAttribute'])->name('deleteAttribute');
+    Route::get('admin/shop/product/attributes/others', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributes');
+    Route::get('admin/shop/product/attributes/others/search', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributesSearch');
+    Route::post('admin/shop/product/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
+    Route::post('admin/shop/product/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
+    Route::put('admin/shop/product/attributes/others/update/{id}/submit', [ShopManagementController::class, 'updateAttributeSubmit'])->name('updateAttributeSubmit');
+    Route::get('admin/shop/product/attributes/others/delete/{id}/submit', [ShopManagementController::class, 'deleteAttribute'])->name('deleteAttribute');
 
 
 
@@ -105,6 +105,9 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::post('admin/shop/shipping/config/locations/create/submit', [ShippingConfigController::class, 'createLocationSubmit'])->name('createLocationSubmit');
     Route::put('admin/shop/shipping/config/locations/{location}/update', [ShippingConfigController::class, 'updateLocation'])->name('updateLocation');
     Route::get('admin/shop/shipping/config/locations/{location}/delete', [ShippingConfigController::class, 'deleteLocation'])->name('deleteLocation');
+
+    Route::get('admin/shop/shipping/config/rates', [ShippingConfigController::class, 'shippingRates'])->name('shippingRates');
+    Route::get('admin/shop/shipping/config/rates/search', [ShippingConfigController::class, 'shippingRates'])->name('shippingRatesSearch');
 
 
 
