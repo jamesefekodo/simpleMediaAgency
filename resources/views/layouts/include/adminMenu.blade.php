@@ -60,33 +60,32 @@
               </div>
           </div>
 
-          <div class="nav-item">
-              <button class="nav-dropdown-button" type="button" aria-expanded="false">
-                  <i class="fa-solid fa-box"></i>
-                  Products
-                  <i class="fa-solid fa-chevron-down dropdown-caret"></i>
-              </button>
+          @if (Auth::user()->hasPermission('shipping_config.manage'))
+              <div class="nav-item">
+                  <button class="nav-dropdown-button" type="button" aria-expanded="false">
+                      <i class="fa-solid fa-truck-fast"></i>
+                      Shipping
+                      <i class="fa-solid fa-chevron-down dropdown-caret"></i>
+                  </button>
 
-              <div class="nav-dropdown">
-                  <div class="nav-dropdown-items">
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-circle-dot"></i> All Products
-                      </a>
+                  <div class="nav-dropdown">
+                      <div class="nav-dropdown-items">
 
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-plus"></i> Add Product
-                      </a>
+                          <a class="nav-sub-link" href="{{ route('locations') }}">
+                              <i class="fa-solid fa-location-dot"></i> Locations
+                          </a>
 
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-tags"></i> Categories
-                      </a>
+                          <a class="nav-sub-link" href="#">
+                              <i class="fa-solid fa-earth-africa"></i> Zones
+                          </a>
 
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-boxes-stacked"></i> Inventory
-                      </a>
+                          <a class="nav-sub-link" href="#">
+                              <i class="fa-solid fa-calculator"></i> Rates
+                          </a>
+                      </div>
                   </div>
               </div>
-          </div>
+          @endif
 
           <div class="nav-item">
               <button class="nav-dropdown-button" type="button" aria-expanded="false">
@@ -152,6 +151,11 @@
                   </div>
               </div>
           </div>
+
+          <div class="sidebar-label">Media</div>
+
+          <div class="sidebar-label">Commerce</div>
+
 
           <div class="nav-item">
               <button class="nav-dropdown-button" type="button" aria-expanded="false">

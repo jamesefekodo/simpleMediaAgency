@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Config\PolicyController;
 use App\Http\Controllers\Config\SystemPolicyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Shipping\ShippingConfigController;
 use App\Http\Controllers\Shop\ShopManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -94,7 +95,21 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::post('admin/shop/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
     Route::put('admin/shop/attributes/others/update/{id}/submit', [ShopManagementController::class, 'updateAttributeSubmit'])->name('updateAttributeSubmit');
     Route::get('admin/shop/attributes/others/delete/{id}/submit', [ShopManagementController::class, 'deleteAttribute'])->name('deleteAttribute');
-    
+
+
+
+    // shipping config
+
+    Route::get('admin/shop/shipping/config/locations', [ShippingConfigController::class, 'locations'])->name('locations');
+    Route::get('admin/shop/shipping/config/locations/search', [ShippingConfigController::class, 'locations'])->name('locationsSearch');
+    Route::post('admin/shop/shipping/config/locations/create/submit', [ShippingConfigController::class, 'createLocationSubmit'])->name('createLocationSubmit');
+    Route::put('admin/shop/shipping/config/locations/{location}/update', [ShippingConfigController::class, 'updateLocation'])->name('updateLocation');
+    Route::get('admin/shop/shipping/config/locations/{location}/delete', [ShippingConfigController::class, 'deleteLocation'])->name('deleteLocation');
+
+
+
+
+
 
 
 
