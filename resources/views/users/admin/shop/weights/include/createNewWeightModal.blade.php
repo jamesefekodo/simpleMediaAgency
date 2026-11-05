@@ -50,7 +50,7 @@
                         </button>
 
                         <button type="submit" class="btn-primary-custom">
-                            <i class="fa-solid fa-floppy-disk"></i> Save Colour
+                            <i class="fa-solid fa-floppy-disk"></i> Save Weight
                         </button>
                     </div>
                 </form>

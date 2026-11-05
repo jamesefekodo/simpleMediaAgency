@@ -17,8 +17,8 @@
          </a>
      @endif
 
-     @if (Auth::user()->hasPermission('weight.manage'))
-         <a href="{{ route('weights') }}" data-toggle="popover" data-trigger="focus" data-placement="top" title="Other Attributes"
+     @if (Auth::user()->hasPermission('other_attributes.manage'))
+         <a href="{{ route('otherAttributes') }}" data-toggle="popover" data-trigger="focus" data-placement="top" title="Other Attributes"
              class="mini-menu  {{ Str::startsWith(request()->path(), 'admin/shop/attributes/others') ? 'mini-menu-active' : '' }}">
              <div class="p-2" tabindex="0">
                  <i class="fas fa-ruler-combined"></i>

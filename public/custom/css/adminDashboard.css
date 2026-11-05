@@ -1249,3 +1249,75 @@ textarea.form-input {
     background: var(--primary);
     color: #fff;
 }
+
+.tag-input-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 50px;
+    padding: 8px 12px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: text;
+    transition: 0.2s;
+}
+
+.tag-input-box:focus-within {
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tag-remove {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.15);
+    color: var(--primary);
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.tag-remove:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.tag-input {
+    flex: 1;
+    min-width: 180px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.field-hint {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}

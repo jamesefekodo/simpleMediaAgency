@@ -84,6 +84,19 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/attributes/weights/search', [ShopManagementController::class, 'weights'])->name('weightsSearch');
     Route::post('admin/shop/attributes/weights/add/submit', [ShopManagementController::class, 'addNewWeightSubmit'])->name('addNewWeightSubmit');
     Route::put('admin/shop/attributes/weights/update/{id}', [ShopManagementController::class, 'updateWeightSubmit'])->name('updateWeightSubmit');
+    Route::get('admin/shop/attributes/weights/delete/{id}', [ShopManagementController::class, 'deleteWeight'])->name('deleteWeight');
+
+
+    // other attributes
+    Route::get('admin/shop/attributes/others', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributes');
+    Route::get('admin/shop/attributes/others/search', [ShopManagementController::class, 'otherAttributes'])->name('otherAttributesSearch');
+    Route::post('admin/shop/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
+    Route::post('admin/shop/attributes/others/add/submit', [ShopManagementController::class, 'addNewAttributeSubmit'])->name('addNewAttributeSubmit');
+    Route::put('admin/shop/attributes/others/update/{id}/submit', [ShopManagementController::class, 'updateAttributeSubmit'])->name('updateAttributeSubmit');
+    Route::get('admin/shop/attributes/others/delete/{id}/submit', [ShopManagementController::class, 'deleteAttribute'])->name('deleteAttribute');
+    
+
+
 
 
     // policies

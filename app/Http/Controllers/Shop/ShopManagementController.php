@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Brand;
 use App\Models\Shop\Colour;
+use App\Models\Shop\OtherAttribute;
 use App\Models\Shop\ProductCategory;
 use App\Models\Shop\Weight;
 use Illuminate\Support\Facades\File;
@@ -571,5 +572,157 @@ class ShopManagementController extends Controller
         $weight->update($validatedData);
 
         return redirect()->back()->with('success', 'Weight updated successfully.');
+    }
+    public function deleteWeight($id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('weight.manage'),
+            403
+        );
+
+        $weight = Weight::where('id', $id)->first();
+        if (!$weight) {
+            return redirect()->route('weights')->with('error', 'Weight not found.');
+        }
+
+        $weight->delete();
+
+        return redirect()->back()->with('success', 'Weight deleted successfully.');
+    }
+    public function otherAttributes(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('other_attributes.manage'),
+            403
+        );
+
+        $requestType = '';
+        $searchKey = '';
+        $pageTitle = '';
+        $otherAttributes = '';
+
+
+        if (Route::currentRouteName() == 'otherAttributesSearch') {
+            $searchKey = $request->input('searchKey');
+            $otherAttributes = OtherAttribute::where('name', 'like', "%$searchKey%")
+                ->orderBy('name')
+                ->paginate(20)->withQueryString();
+
+            $requestType = 'search';
+            $pageTitle = 'Search Results :: ' . $searchKey;
+        } else {
+            $otherAttributes = OtherAttribute::orderBy('name')->paginate(20);
+            $requestType = 'all';
+            $pageTitle = 'Other Attributes';
+        }
+
+        $data = [
+            'requestType' => $requestType,
+            'searchKey' => $searchKey,
+            'pageTitle' => $pageTitle,
+            'otherAttributes' => $otherAttributes,
+        ];
+
+
+        return view('users.admin.shop.otherAttributes.otherAttributes', compact('data'));
+    }
+    public function addNewAttributeSubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('other_attributes.manage'),
+            403
+        );
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:other_attributes,name',
+            'values' => 'nullable|array',
+            'values.*' => 'required|string|max:255',
+        ]);
+
+        $attribute = OtherAttribute::create([
+            'name' => trim($validatedData['name']),
+            'is_active' => true,
+        ]);
+
+        if (! empty($validatedData['values'])) {
+            foreach ($validatedData['values'] as $value) {
+                $attribute->attributeValues()->create([
+                    'value' => trim($value),
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'New attribute added successfully.');
+    }
+    public function updateAttributeSubmit($id, Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('other_attributes.manage'),
+            403
+        );
+
+        $attribute = OtherAttribute::where('id', $id)->first();
+
+        if (!$attribute) {
+            return redirect()->back()->with('error', 'Records not found.');
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:other_attributes,name,' . $attribute->id,
+            'values' => 'required|array|min:1',
+            'values.*' => 'required|string|max:255',
+        ]);
+
+        $attribute->update([
+            'name' => trim($validatedData['name']),
+        ]);
+
+        $attribute->attributeValues()->delete();
+
+        foreach ($validatedData['values'] as $value) {
+            $attribute->attributeValues()->create([
+                'value' => trim($value),
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Attribute updated successfully.');
+    }
+    public function deleteAttribute($id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('other_attributes.manage'),
+            403
+        );
+
+
+        $attribute = OtherAttribute::where('id', $id)->first();
+        if (!$attribute) {
+            return redirect()->back()->with('error', 'Records not found.');
+        }
+
+        $attribute->attributeValues()->delete();
+
+        $attribute->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Attribute deleted successfully.');
     }
 }

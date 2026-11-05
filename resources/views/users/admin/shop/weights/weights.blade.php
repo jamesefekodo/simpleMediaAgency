@@ -34,7 +34,7 @@
         <div class="panel col-md-11">
             <div class="panel-header">
                 <div>
-                    <h3>Colours</h3>
+                    <h3>Weights</h3>
                     <span>
                         {{ $data['weights']->total() }}
                         {{ $data['weights']->total() === 1 ? 'weight' : 'weights' }} found
@@ -101,8 +101,8 @@
                                             @endif
 
                                             @if (Auth::user()->hasPermission('weight.manage'))
-                                                <button type="button" class="btn btn-danger rounded btn-sm"
-                                                    {{-- data-bs-toggle="modal" data-bs-target="#deleteColourModal" --}}>
+                                                <button type="button" class="btn btn-danger rounded btn-sm delete-record"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteWeightModal" data-url="{{ route('deleteWeight', ['id' => $weight->id]) }}">
                                                     <i class="fa-solid fa-trash"></i> Delete
                                                 </button>
                                             @endif
