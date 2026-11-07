@@ -6,6 +6,7 @@ use App\Models\ShippingAddress\ShippingRateSurcharge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ShippingSurcharge extends Model
 {
@@ -19,6 +20,17 @@ class ShippingSurcharge extends Model
         'value',
         'is_active',
     ];
+
+
+    // slug
+    protected static function booted(): void
+    {
+        static::creating(function ($surcharge) {
+            if (empty($surcharge->slug)) {
+                $surcharge->slug = 'shsrch-' . Str::uuid();
+            }
+        });
+    }
 
     protected $casts = [
         'value' => 'decimal:2',

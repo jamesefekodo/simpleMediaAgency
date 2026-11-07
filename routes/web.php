@@ -102,9 +102,15 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/shipping/config/zones', [ShippingConfigController::class, 'shippingZones'])->name('shippingZones');
     Route::post('admin/shop/shipping/config/zones', [ShippingConfigController::class, 'createNewShippingZone'])->name('createNewShippingZone');
     Route::put('admin/shop/shipping/config/zones/{slug}/update', [ShippingConfigController::class, 'updateShippingZone'])->name('updateShippingZone');
-        Route::get('admin/shop/shipping/config/zones/{slug}/delete', [ShippingConfigController::class, 'deleteShippingZone'])->name('deleteShippingZone');
+    Route::get('admin/shop/shipping/config/zones/{slug}/delete', [ShippingConfigController::class, 'deleteShippingZone'])->name('deleteShippingZone');
 
-    
+
+
+    Route::get('admin/shop/shipping/config/surcharges', [ShippingConfigController::class, 'surcharges'])->name('surcharges');
+    Route::post('admin/shop/shipping/config/surcharges/create_new', [ShippingConfigController::class, 'createShippingSurcharge'])->name('createShippingSurcharge');
+    Route::put('admin/shop/shipping/config/surcharges/{slug}/update', [ShippingConfigController::class, 'updateShippingSurcharge'])->name('updateShippingSurcharge');
+    Route::get('admin/shop/shipping/config/surcharges/{slug}/delete', [ShippingConfigController::class, 'deleteShippingSurcharge'])->name('deleteShippingSurcharge');
+
 
 
 

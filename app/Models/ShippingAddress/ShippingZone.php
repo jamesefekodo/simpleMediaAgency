@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ShippingZone extends Model
 {
@@ -20,6 +21,17 @@ class ShippingZone extends Model
         'free_shipping_threshold',
         'is_active',
     ];
+
+    // slug
+    protected static function booted(): void
+    {
+        static::creating(function ($zone) {
+            if (empty($zone->slug)) {
+                $zone->slug = 'szone-' . Str::uuid();
+            }
+        });
+    }
+
 
     protected $casts = [
         'free_shipping_threshold' => 'decimal:2',

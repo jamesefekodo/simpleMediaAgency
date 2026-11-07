@@ -16,7 +16,7 @@
                     @method('PUT')
 
                     <div class="form-grid">
-                        <div class="form-field">
+                        <div class="form-field full-width">
                             <label>Zone Name <span class="required">*</span></label>
 
                             <input type="text" name="name" class="form-input"
@@ -24,13 +24,13 @@
                             <p style="color: red">{{ $errors->first('name') }}</p>
                         </div>
 
-                        <div class="form-field">
+                        {{-- <div class="form-field">
                             <label>Slug</label>
 
                             <input type="text" name="slug" class="form-input"
                                 value="{{ old('slug', $zone->slug) }}" placeholder="e.g. lagos-mainland">
                             <p style="color: red">{{ $errors->first('slug') }}</p>
-                        </div>
+                        </div> --}}
 
                         <div class="form-field">
                             <label>Free Shipping Threshold <span class="">₦</span></label>

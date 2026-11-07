@@ -21,7 +21,8 @@
 
           <div class="sidebar-label">Commerce</div>
           <div class="nav-item">
-              <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/product') ? 'active' : '' }}"
+              <button
+                  class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/product') ? 'active' : '' }}"
                   type="button" aria-expanded="false">
                   <i class="fa-solid fa-store"></i>
                   Shop
@@ -62,7 +63,9 @@
 
           @if (Auth::user()->hasPermission('shipping_config.manage'))
               <div class="nav-item">
-                  <button class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/shipping') ? 'active' : '' }}" type="button" aria-expanded="false">
+                  <button
+                      class="nav-dropdown-button {{ Str::startsWith(request()->path(), 'admin/shop/shipping') ? 'active' : '' }}"
+                      type="button" aria-expanded="false">
                       <i class="fa-solid fa-truck-fast"></i>
                       Shipping
                       <i class="fa-solid fa-chevron-down dropdown-caret"></i>
@@ -71,12 +74,19 @@
                   <div class="nav-dropdown">
                       <div class="nav-dropdown-items">
 
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/locations') ? 'active' : '' }}" href="{{ route('locations') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/locations') ? 'active' : '' }}"
+                              href="{{ route('locations') }}">
                               <i class="fa-solid fa-location-dot"></i> Locations
                           </a>
 
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/zones') ? 'active' : '' }}" href="{{ route('shippingZones') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/zones') ? 'active' : '' }}"
+                              href="{{ route('shippingZones') }}">
                               <i class="fa-solid fa-earth-africa"></i> Zones
+                          </a>
+
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/surcharges') ? 'active' : '' }}"
+                              href="{{ route('surcharges') }}">
+                              <i class="fa-solid fa-square-plus"></i> Surcharges
                           </a>
 
                           <a class="nav-sub-link" href="{{ route('shippingRates') }}">

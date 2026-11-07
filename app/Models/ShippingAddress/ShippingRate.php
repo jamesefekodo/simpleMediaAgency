@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ShippingRate extends Model
 {
@@ -23,7 +24,7 @@ class ShippingRate extends Model
         'estimated_days_max',
         'is_active',
     ];
-
+    
 
     protected $casts = [
         'base_fee' => 'decimal:2',

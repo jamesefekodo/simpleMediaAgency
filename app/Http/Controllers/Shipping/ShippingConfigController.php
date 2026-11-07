@@ -68,13 +68,13 @@ class ShippingConfigController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'slug' => [
-                'nullable',
-                'string',
-                'max:255',
-                'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
-                'unique:shipping_zones,slug',
-            ],
+            // 'slug' => [
+            //     'nullable',
+            //     'string',
+            //     'max:255',
+            //     'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
+            //     'unique:shipping_zones,slug',
+            // ],
             'description' => ['nullable', 'string', 'max:1000'],
             'free_shipping_threshold' => ['nullable', 'numeric', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
@@ -85,9 +85,9 @@ class ShippingConfigController extends Controller
         DB::transaction(function () use ($request, $validated) {
             $zone = ShippingZone::create([
                 'name' => $validated['name'],
-                'slug' => !empty($validated['slug'])
-                    ? Str::slug($validated['slug'])
-                    : Str::slug($validated['name']),
+                // 'slug' => !empty($validated['slug'])
+                //     ? Str::slug($validated['slug'])
+                //     : Str::slug($validated['name']),
                 'description' => $validated['description'] ?? null,
                 'free_shipping_threshold' => $validated['free_shipping_threshold'] ?? null,
                 'is_active' => $request->boolean('is_active'),
@@ -120,13 +120,13 @@ class ShippingConfigController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'slug' => [
-                'nullable',
-                'string',
-                'max:255',
-                'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
-                'unique:shipping_zones,slug,' . $shippingZone->id,
-            ],
+            // 'slug' => [
+            //     'nullable',
+            //     'string',
+            //     'max:255',
+            //     'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
+            //     'unique:shipping_zones,slug,' . $shippingZone->id,
+            // ],
             'description' => ['nullable', 'string', 'max:1000'],
             'free_shipping_threshold' => ['nullable', 'numeric', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
@@ -137,7 +137,7 @@ class ShippingConfigController extends Controller
         DB::transaction(function () use ($request, $shippingZone, $validated) {
             $shippingZone->update([
                 'name' => $validated['name'],
-                'slug' => $validated['slug'] ?? Str::slug($validated['name']),
+                // 'slug' => $validated['slug'] ?? Str::slug($validated['name']),
                 'description' => $validated['description'] ?? null,
                 'free_shipping_threshold' => $validated['free_shipping_threshold'] ?? null,
                 'is_active' => $request->boolean('is_active'),
@@ -355,6 +355,127 @@ class ShippingConfigController extends Controller
             ->with('success', 'Location deleted successfully.');
     }
 
+    public function surcharges(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $searchKey = trim($request->get('searchKey', ''));
+        $selectedType = $request->get('type');
+
+        $surcharges = ShippingSurcharge::query()
+            ->when($searchKey, function ($query) use ($searchKey) {
+                $query->where(function ($surchargeQuery) use ($searchKey) {
+                    $surchargeQuery->where('name', 'like', '%' . $searchKey . '%')
+                        ->orWhere('slug', 'like', '%' . $searchKey . '%')
+                        ->orWhere('description', 'like', '%' . $searchKey . '%');
+                });
+            })
+            ->when($selectedType, function ($query) use ($selectedType) {
+                $query->where('type', $selectedType);
+            })
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+
+        $data = [
+            'pageTitle' => 'Shipping Surcharges',
+            'surcharges' => $surcharges,
+            'searchKey' => $searchKey,
+            'selectedType' => $selectedType,
+        ];
+
+        return view('users.admin.shipping.shippingConfig.surcharges.shippingSurcharges', compact('data'));
+    }
+    public function createShippingSurcharge(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'type' => ['required', 'in:fixed,percentage'],
+            'value' => ['required', 'numeric', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        ShippingSurcharge::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'type' => $validated['type'],
+            'value' => $validated['value'],
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping surcharge created successfully.');
+    }
+    public function updateShippingSurcharge($slug, Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+        $shippingSurcharge = ShippingSurcharge::where('slug', $slug)->first();
+        if (!$shippingSurcharge) {
+            return redirect()->back()->with('error', 'Shipping surcharge not found.');
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'type' => ['required', 'in:fixed,percentage'],
+            'value' => ['required', 'numeric', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        $shippingSurcharge->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'type' => $validated['type'],
+            'value' => $validated['value'],
+            'is_active' => $request->boolean('is_active'),
+        ]);
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping surcharge updated successfully.');
+    }
+
+    public function deleteShippingSurcharge($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+        $shippingSurcharge = ShippingSurcharge::where('slug', $slug)->first();
+        if (!$shippingSurcharge) {
+            return redirect()->back()->with('error', 'Shipping surcharge not found.');
+        }
+
+        $shippingSurcharge->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping surcharge deleted successfully.');
+    }
     public function shippingRates(Request $request)
     {
         /** @var \App\Models\User $user */
