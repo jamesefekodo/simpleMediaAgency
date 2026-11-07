@@ -10,11 +10,173 @@ use App\Models\ShippingAddress\ShippingZone;
 use App\Models\Shop\Weight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class ShippingConfigController extends Controller
 {
+    public function shippingZones(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $searchKey = trim($request->get('searchKey', ''));
+
+        $locations = Location::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $zones = ShippingZone::query()
+            ->withCount(['locations', 'shippingRates'])
+            ->when($searchKey, function ($query) use ($searchKey) {
+                $query->where(function ($zoneQuery) use ($searchKey) {
+                    $zoneQuery->where('name', 'like', '%' . $searchKey . '%')
+                        ->orWhere('slug', 'like', '%' . $searchKey . '%')
+                        ->orWhere('description', 'like', '%' . $searchKey . '%');
+                });
+            })
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+
+        $data = [
+            'pageTitle' => 'Shipping Zones',
+            'locations' => $locations,
+            'zones' => $zones,
+            'searchKey' => $searchKey,
+        ];
+
+        return view('users.admin.shipping.shippingConfig.zones.shippingZones', compact('data'));
+    }
+
+    public function createNewShippingZone(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
+                'unique:shipping_zones,slug',
+            ],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'free_shipping_threshold' => ['nullable', 'numeric', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+            'location_ids' => ['nullable', 'array'],
+            'location_ids.*' => ['exists:locations,id'],
+        ]);
+
+        DB::transaction(function () use ($request, $validated) {
+            $zone = ShippingZone::create([
+                'name' => $validated['name'],
+                'slug' => !empty($validated['slug'])
+                    ? Str::slug($validated['slug'])
+                    : Str::slug($validated['name']),
+                'description' => $validated['description'] ?? null,
+                'free_shipping_threshold' => $validated['free_shipping_threshold'] ?? null,
+                'is_active' => $request->boolean('is_active'),
+            ]);
+
+            $zone->locations()->sync($validated['location_ids'] ?? []);
+        });
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping zone created successfully.');
+    }
+
+    public function updateShippingZone($slug, Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $shippingZone = ShippingZone::where('slug', $slug)->first();
+        if (!$shippingZone) {
+            return redirect()->back()->with('error', 'Shipping zone not found.');
+        }
+
+
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/',
+                'unique:shipping_zones,slug,' . $shippingZone->id,
+            ],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'free_shipping_threshold' => ['nullable', 'numeric', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+            'location_ids' => ['nullable', 'array'],
+            'location_ids.*' => ['exists:locations,id'],
+        ]);
+
+        DB::transaction(function () use ($request, $shippingZone, $validated) {
+            $shippingZone->update([
+                'name' => $validated['name'],
+                'slug' => $validated['slug'] ?? Str::slug($validated['name']),
+                'description' => $validated['description'] ?? null,
+                'free_shipping_threshold' => $validated['free_shipping_threshold'] ?? null,
+                'is_active' => $request->boolean('is_active'),
+            ]);
+
+            $shippingZone->locations()->sync($validated['location_ids'] ?? []);
+        });
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping zone updated successfully.');
+    }
+    public function deleteShippingZone($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $shippingZone = ShippingZone::where('slug', $slug)->first();
+        if (!$shippingZone) {
+            return redirect()->back()->with('error', 'Shipping zone not found.');
+        }
+
+
+        DB::transaction(function () use ($shippingZone) {
+            $shippingZone->locations()->detach();
+
+            $shippingZone->delete();
+        });
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping zone deleted successfully.');
+    }
+
     public function locations(Request $request)
     {
         /** @var \App\Models\User $user */

@@ -78,6 +78,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    @include('layouts.include.toastrNotificationFunction')
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('adminSidebar');
@@ -126,25 +128,25 @@
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function() {
-                const button = form.querySelector('button[type="submit"]');
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form').forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    const button = form.querySelector('button[type="submit"]');
 
-                if (!button || button.dataset.loading === 'true') {
-                    return;
-                }
+                    if (!button || button.dataset.loading === 'true') {
+                        return;
+                    }
 
-                button.dataset.loading = 'true';
-                button.disabled = true;
+                    button.dataset.loading = 'true';
+                    button.disabled = true;
 
-                button.dataset.originalHtml = button.innerHTML;
-                button.innerHTML =
-                    '<span class="button-spinner"></span> Please wait...';
+                    button.dataset.originalHtml = button.innerHTML;
+                    button.innerHTML =
+                        '<span class="button-spinner"></span> Please wait...';
+                });
             });
         });
-    });
-</script>
+    </script>
 </body>
 
 </html>

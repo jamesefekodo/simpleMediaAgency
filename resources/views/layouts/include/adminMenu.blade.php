@@ -75,7 +75,7 @@
                               <i class="fa-solid fa-location-dot"></i> Locations
                           </a>
 
-                          <a class="nav-sub-link" href="#">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/zones') ? 'active' : '' }}" href="{{ route('shippingZones') }}">
                               <i class="fa-solid fa-earth-africa"></i> Zones
                           </a>
 

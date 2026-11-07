@@ -99,6 +99,17 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
 
 
     // shipping config
+    Route::get('admin/shop/shipping/config/zones', [ShippingConfigController::class, 'shippingZones'])->name('shippingZones');
+    Route::post('admin/shop/shipping/config/zones', [ShippingConfigController::class, 'createNewShippingZone'])->name('createNewShippingZone');
+    Route::put('admin/shop/shipping/config/zones/{slug}/update', [ShippingConfigController::class, 'updateShippingZone'])->name('updateShippingZone');
+        Route::get('admin/shop/shipping/config/zones/{slug}/delete', [ShippingConfigController::class, 'deleteShippingZone'])->name('deleteShippingZone');
+
+    
+
+
+
+
+
 
     Route::get('admin/shop/shipping/config/locations', [ShippingConfigController::class, 'locations'])->name('locations');
     Route::get('admin/shop/shipping/config/locations/search', [ShippingConfigController::class, 'locations'])->name('locationsSearch');
