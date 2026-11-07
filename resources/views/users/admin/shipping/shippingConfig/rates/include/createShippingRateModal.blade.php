@@ -1,4 +1,4 @@
-<div class="modal fade" id="addNewRateModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addNewShippingRateModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,7 +8,9 @@
             </div>
 
             <div class="modal-body">
-                <form class="admin-form" method="POST" {{-- action="{{ route('shippingRates.store') }}" --}}>
+                <form class="admin-form" method="POST" 
+                action="{{ route('createNewshippingRate') }}"
+                >
                     @csrf
 
                     <div class="form-grid">
@@ -25,10 +27,14 @@
                                     </option>
                                 @endforeach
                             </select>
+
+                            <p style="color: red">
+                                {{ $errors->first('shipping_zone_id') }}
+                            </p>
                         </div>
 
                         <div class="form-field">
-                            <label>Weight <span class="required">*</span></label>
+                            <label>Package Weight <span class="required">*</span></label>
 
                             <select name="weight_id" class="form-input" required>
                                 <option value="">Select weight</option>
@@ -36,61 +42,104 @@
                                 @foreach ($weights as $weight)
                                     <option value="{{ $weight->id }}"
                                         {{ old('weight_id') == $weight->id ? 'selected' : '' }}>
-                                        {{ $weight->name ?? $weight->min_weight . 'kg - ' . $weight->max_weight . 'kg' }}
+                                        {{ $weight->name }}
+                                        ({{ number_format($weight->min_weight, 3) }}kg -
+                                        {{ number_format($weight->max_weight, 3) }}kg)
                                     </option>
                                 @endforeach
                             </select>
+
+                            <p style="color: red">
+                                {{ $errors->first('weight_id') }}
+                            </p>
                         </div>
 
                         <div class="form-field">
                             <label>Base Fee <span class="required">*</span></label>
 
-                            <input type="number" step="0.01" min="0" name="base_fee" class="form-input"
-                                value="{{ old('base_fee') }}" required>
+                            <input
+                                type="number"
+                                name="base_fee"
+                                step="0.01"
+                                min="0"
+                                class="form-input"
+                                value="{{ old('base_fee') }}"
+                                placeholder="e.g. 2000"
+                                required
+                            >
+
+                            <p style="color: red">
+                                {{ $errors->first('base_fee') }}
+                            </p>
                         </div>
 
                         <div class="form-field">
                             <label>Per KG Fee <span class="required">*</span></label>
 
-                            <input type="number" step="0.01" min="0" name="per_kg_fee" class="form-input"
-                                value="{{ old('per_kg_fee') }}" required>
+                            <input
+                                type="number"
+                                name="per_kg_fee"
+                                step="0.01"
+                                min="0"
+                                class="form-input"
+                                value="{{ old('per_kg_fee') }}"
+                                placeholder="e.g. 300"
+                                required
+                            >
+
+                            <p style="color: red">
+                                {{ $errors->first('per_kg_fee') }}
+                            </p>
                         </div>
 
                         <div class="form-field">
                             <label>Minimum Delivery Days <span class="required">*</span></label>
 
-                            <input type="number" min="0" name="estimated_days_min" class="form-input"
-                                value="{{ old('estimated_days_min') }}" required>
+                            <input
+                                type="number"
+                                name="estimated_days_min"
+                                min="0"
+                                class="form-input"
+                                value="{{ old('estimated_days_min') }}"
+                                placeholder="e.g. 1"
+                                required
+                            >
+
+                            <p style="color: red">
+                                {{ $errors->first('estimated_days_min') }}
+                            </p>
                         </div>
 
                         <div class="form-field">
                             <label>Maximum Delivery Days <span class="required">*</span></label>
 
-                            <input type="number" min="0" name="estimated_days_max" class="form-input"
-                                value="{{ old('estimated_days_max') }}" required>
+                            <input
+                                type="number"
+                                name="estimated_days_max"
+                                min="0"
+                                class="form-input"
+                                value="{{ old('estimated_days_max') }}"
+                                placeholder="e.g. 3"
+                                required
+                            >
+
+                            <p style="color: red">
+                                {{ $errors->first('estimated_days_max') }}
+                            </p>
                         </div>
 
-                        <div class="form-field full-width">
-                            <label>Surcharges</label>
-
-                            <select name="surcharge_ids[]" class="form-input" multiple size="5">
-                                @foreach ($surcharges as $surcharge)
-                                    <option value="{{ $surcharge->id }}"
-                                        {{ in_array($surcharge->id, old('surcharge_ids', [])) ? 'selected' : '' }}>
-                                        {{ $surcharge->name }} — {{ $surcharge->type }} — {{ $surcharge->value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-field">
+                        {{-- <div class="form-field">
                             <label>Status</label>
 
                             <select name="is_active" class="form-input">
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </select>
-                        </div>
+
+                            <p style="color: red">
+                                {{ $errors->first('is_active') }}
+                            </p>
+                        </div> --}}
                     </div>
 
                     <div class="form-actions">

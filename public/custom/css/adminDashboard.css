@@ -880,6 +880,13 @@ a {
     transition: 0.2s;
 }
 
+.form-input input,
+.form-input textarea,
+.form-input select {
+    text-align: center;
+    text-align-last: center;
+}
+
 .form-input:focus {
     border-color: var(--primary);
     background: #fff;

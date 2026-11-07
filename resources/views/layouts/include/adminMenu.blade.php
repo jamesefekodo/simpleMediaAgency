@@ -89,7 +89,7 @@
                               <i class="fa-solid fa-square-plus"></i> Surcharges
                           </a>
 
-                          <a class="nav-sub-link" href="{{ route('shippingRates') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/rates') ? 'active' : '' }}" href="{{ route('shippingRates') }}">
                               <i class="fa-solid fa-calculator"></i> Rates
                           </a>
                       </div>

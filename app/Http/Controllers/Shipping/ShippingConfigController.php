@@ -486,18 +486,27 @@ class ShippingConfigController extends Controller
             403
         );
 
+        $searchKey = trim($request->get('searchKey', ''));
         $selectedZoneId = $request->get('zone');
 
         $zones = ShippingZone::orderBy('name')->get();
 
-        $weights = Weight::orderBy('name')->get();
-
-        $surcharges = ShippingSurcharge::where('is_active', true)
-            ->orderBy('name')
-            ->get();
+        $weights = Weight::orderBy('min_weight')->get();
 
         $rates = ShippingRate::query()
-            ->with(['shippingZone', 'weight', 'surcharges'])
+            ->with(['shippingZone', 'weight'])
+            ->when($searchKey, function ($query) use ($searchKey) {
+                $query->where(function ($rateQuery) use ($searchKey) {
+                    $rateQuery->where('base_fee', 'like', '%' . $searchKey . '%')
+                        ->orWhere('per_kg_fee', 'like', '%' . $searchKey . '%')
+                        ->orWhereHas('shippingZone', function ($zoneQuery) use ($searchKey) {
+                            $zoneQuery->where('name', 'like', '%' . $searchKey . '%');
+                        })
+                        ->orWhereHas('weight', function ($weightQuery) use ($searchKey) {
+                            $weightQuery->where('name', 'like', '%' . $searchKey . '%');
+                        });
+                });
+            })
             ->when($selectedZoneId, function ($query) use ($selectedZoneId) {
                 $query->where('shipping_zone_id', $selectedZoneId);
             })
@@ -510,11 +519,112 @@ class ShippingConfigController extends Controller
             'pageTitle' => 'Shipping Rates',
             'zones' => $zones,
             'weights' => $weights,
-            'surcharges' => $surcharges,
             'rates' => $rates,
+            'searchKey' => $searchKey,
             'selectedZoneId' => $selectedZoneId,
+            'canCreateRate' => $zones->isNotEmpty() && $weights->isNotEmpty(),
         ];
 
         return view('users.admin.shipping.shippingConfig.rates.shippingRates', compact('data'));
+    }
+    public function createNewshippingRate(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $validated = $request->validate([
+            'shipping_zone_id' => ['required', 'exists:shipping_zones,id'],
+            'weight_id' => ['required', 'exists:weights,id'],
+            'base_fee' => ['required', 'numeric', 'min:0'],
+            'per_kg_fee' => ['required', 'numeric', 'min:0'],
+            'estimated_days_min' => ['required', 'integer', 'min:0'],
+            'estimated_days_max' => ['required', 'integer', 'gte:estimated_days_min'],
+        ]);
+
+        $exists = ShippingRate::where('shipping_zone_id', $validated['shipping_zone_id'])
+            ->where('weight_id', $validated['weight_id'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()
+                ->route('shippingRates')
+                ->with('error', 'A shipping rate already exists for this zone and weight.');
+        }
+
+        ShippingRate::create([
+            'shipping_zone_id' => $validated['shipping_zone_id'],
+            'weight_id' => $validated['weight_id'],
+            'base_fee' => $validated['base_fee'],
+            'per_kg_fee' => $validated['per_kg_fee'],
+            'estimated_days_min' => $validated['estimated_days_min'],
+            'estimated_days_max' => $validated['estimated_days_max'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping rate created successfully.');
+    }
+
+    public function updateShippingRates($id, Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+
+        $validated = $request->validate([
+            'shipping_zone_id' => ['required', 'exists:shipping_zones,id'],
+            'weight_id' => ['required', 'exists:weights,id'],
+            'base_fee' => ['required', 'numeric', 'min:0'],
+            'per_kg_fee' => ['required', 'numeric', 'min:0'],
+            'estimated_days_min' => ['required', 'integer', 'min:0'],
+            'estimated_days_max' => ['required', 'integer', 'gte:estimated_days_min'],
+        ]);
+
+        $shippingRate = ShippingRate::where('id', $id)->first();
+        if (!$shippingRate) {
+            return redirect()->back()->with('error', 'Shipping rate not found.');
+        }
+
+        $shippingRate->update([
+            'shipping_zone_id' => $validated['shipping_zone_id'],
+            'weight_id' => $validated['weight_id'],
+            'base_fee' => $validated['base_fee'],
+            'per_kg_fee' => $validated['per_kg_fee'],
+            'estimated_days_min' => $validated['estimated_days_min'],
+            'estimated_days_max' => $validated['estimated_days_max'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping rate updated successfully.');
+    }
+    public function deleteSshippingRate($id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('shipping_config.manage'),
+            403
+        );
+        $shippingRate = ShippingRate::where('id', $id)->first();
+        if (!$shippingRate) {
+            return redirect()->back()->with('error', 'Shipping rate not found.');
+        }
+
+        $shippingRate->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Shipping rate deleted successfully.');
     }
 }

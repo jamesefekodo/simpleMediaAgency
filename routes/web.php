@@ -115,8 +115,6 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
 
 
 
-
-
     Route::get('admin/shop/shipping/config/locations', [ShippingConfigController::class, 'locations'])->name('locations');
     Route::get('admin/shop/shipping/config/locations/search', [ShippingConfigController::class, 'locations'])->name('locationsSearch');
     Route::post('admin/shop/shipping/config/locations/create/submit', [ShippingConfigController::class, 'createLocationSubmit'])->name('createLocationSubmit');
@@ -125,12 +123,9 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
 
     Route::get('admin/shop/shipping/config/rates', [ShippingConfigController::class, 'shippingRates'])->name('shippingRates');
     Route::get('admin/shop/shipping/config/rates/search', [ShippingConfigController::class, 'shippingRates'])->name('shippingRatesSearch');
-
-
-
-
-
-
+    Route::post('admin/shop/shipping/config/rates/create_new', [ShippingConfigController::class, 'createNewshippingRate'])->name('createNewshippingRate');
+    Route::put('admin/shop/shipping/config/rates/{id}/update', [ShippingConfigController::class, 'updateShippingRates'])->name('updateShippingRates');
+    Route::get('admin/shop/shipping/config/rates/{id}/delete', [ShippingConfigController::class, 'deleteSshippingRate'])->name('deleteSshippingRate');
 
 
 

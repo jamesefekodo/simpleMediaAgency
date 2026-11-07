@@ -21,13 +21,30 @@
                 </option>
             @endforeach
         </select>
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            type="search"
+            name="searchKey"
+            class="search-input"
+            value="{{ $data['searchKey'] }}"
+            placeholder="Search rates..."
+            aria-label="Search rates"
+        >
     </form>
 
-    <button type="button" class="btn-primary-custom"
-        data-bs-toggle="modal"
-        data-bs-target="#addNewRateModal">
-        <i class="fa-solid fa-plus"></i> Add Rate
-    </button>
+    @if ($data['canCreateRate'])
+        <button type="button" class="btn-primary-custom"
+            data-bs-toggle="modal"
+            data-bs-target="#addNewShippingRateModal">
+            <i class="fa-solid fa-plus"></i> Add Rate
+        </button>
+    @else
+        <a href="{{ route('shippingZones') }}" class="btn-primary-custom">
+            <i class="fa-solid fa-layer-group"></i> Create Zone / Weight First
+        </a>
+    @endif
 @endsection
 
 @section('content')
@@ -43,6 +60,20 @@
                 </div>
             </div>
 
+            @if (!$data['canCreateRate'])
+                <div class="alert alert-warning">
+                    <strong>Shipping rates cannot be created yet.</strong>
+
+                    @if ($data['zones']->isEmpty())
+                        Create at least one shipping zone first.
+                    @endif
+
+                    @if ($data['weights']->isEmpty())
+                        Create at least one package weight first.
+                    @endif
+                </div>
+            @endif
+
             @if ($data['rates']->isEmpty())
                 <div class="empty-state">
                     <div class="empty-icon">
@@ -50,7 +81,7 @@
                     </div>
 
                     <h3>No shipping rates found</h3>
-                    <p>Create a rate for a shipping zone and weight.</p>
+                    <p>Create delivery fees for a shipping zone and package weight.</p>
                 </div>
             @else
                 <div class="table-responsive">
@@ -61,9 +92,8 @@
                                 <th>Zone</th>
                                 <th>Weight</th>
                                 <th>Base Fee</th>
-                                <th>Per KG</th>
+                                <th>Per KG Fee</th>
                                 <th>Delivery Days</th>
-                                <th>Surcharges</th>
                                 <th>Status</th>
                                 <th class="text-end">Actions</th>
                             </tr>
@@ -76,7 +106,7 @@
 
                                     <td>{{ $rate->shippingZone?->name ?? '—' }}</td>
 
-                                    <td>{{ $rate->weight?->value ?? '—' }} kg</td>
+                                    <td>{{ $rate->weight?->name ?? '—' }}</td>
 
                                     <td>₦{{ number_format($rate->base_fee, 2) }}</td>
 
@@ -85,14 +115,6 @@
                                     <td>
                                         {{ $rate->estimated_days_min }} -
                                         {{ $rate->estimated_days_max }} days
-                                    </td>
-
-                                    <td>
-                                        @if ($rate->surcharges->isEmpty())
-                                            —
-                                        @else
-                                            {{ $rate->surcharges->pluck('shippingSurcharge.name')->implode(', ') }}
-                                        @endif
                                     </td>
 
                                     <td>
@@ -107,13 +129,13 @@
                                         <div class="table-actions">
                                             <button type="button" class="icon-button"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#editRateModal-{{ $rate->id }}">
+                                                data-bs-target="#editShippingRateModal-{{ $rate->id }}">
                                                 <i class="fa-solid fa-pen"></i>
                                             </button>
 
                                             <button type="button"
-                                                class="icon-button danger delete-rate"
-                                                {{-- data-url="{{ route('shippingRates.delete', $rate) }}" --}}
+                                                class="icon-button danger delete-shipping-rate"
+                                                data-url="{{ route('deleteSshippingRate', ['id' => $rate->id]) }}"
                                                 >
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
@@ -135,21 +157,19 @@
     @include('users.admin.shipping.shippingConfig.rates.include.createShippingRateModal', [
         'zones' => $data['zones'],
         'weights' => $data['weights'],
-        'surcharges' => $data['surcharges'],
     ])
 
-    {{-- @foreach ($data['rates'] as $rate)
-        @include('users.admin.shipping.shippingConfig.rates.include.editRateModal', [
+    @foreach ($data['rates'] as $rate)
+        @include('users.admin.shipping.shippingConfig.rates.include.editShippingRateModal', [
             'rate' => $rate,
             'zones' => $data['zones'],
             'weights' => $data['weights'],
-            'surcharges' => $data['surcharges'],
         ])
-    @endforeach --}}
+    @endforeach
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.delete-rate').forEach(function(button) {
+            document.querySelectorAll('.delete-shipping-rate').forEach(function(button) {
                 button.addEventListener('click', function() {
                     const url = this.dataset.url;
 
