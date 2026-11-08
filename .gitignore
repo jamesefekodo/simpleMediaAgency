@@ -36,7 +36,7 @@ Thumbs.db
 /storage/framework/sessions/*
 /storage/framework/views/*
 /bootstrap/cache/*
-data/
+/data/
 
 #  Logs
 /storage/logs/*.log
