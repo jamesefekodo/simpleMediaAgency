@@ -128,6 +128,14 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/shipping/config/rates/{id}/delete', [ShippingConfigController::class, 'deleteSshippingRate'])->name('deleteSshippingRate');
 
 
+    // products
+    Route::get('admin/shop/product/products', [ShopManagementController::class, 'products'])->name('products');
+    Route::get('admin/shop/product/products/search', [ShopManagementController::class, 'products'])->name('productsSearch');
+    Route::get('admin/shop/product/products/add_new', [ShopManagementController::class, 'newProduct'])->name('newProduct');
+    Route::post('admin/shop/product/products/create_new/submit', [ShopManagementController::class, 'addNewProductSubmit'])->name('addNewProductSubmit');
+        Route::get('admin/shop/product/products/view/{slug}', [ShopManagementController::class, 'viewProduct'])->name('viewProduct');
+
+    
 
     // policies
     Route::get('admin/config/policies', [SystemPolicyController::class, 'policies'])->name('policies');

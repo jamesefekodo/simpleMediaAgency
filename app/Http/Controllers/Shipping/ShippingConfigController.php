@@ -7,6 +7,7 @@ use App\Models\ShippingAddress\Location;
 use App\Models\ShippingAddress\ShippingRate;
 use App\Models\ShippingAddress\ShippingSurcharge;
 use App\Models\ShippingAddress\ShippingZone;
+use App\Models\Shop\Product;
 use App\Models\Shop\Weight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -627,4 +628,6 @@ class ShippingConfigController extends Controller
             ->back()
             ->with('success', 'Shipping rate deleted successfully.');
     }
+
+
 }

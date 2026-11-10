@@ -35,10 +35,11 @@
                       <a class="nav-sub-link" href="#">
                           <i class="fa-solid fa-truck-fast"></i> Orders
                       </a>
-
-                      <a class="nav-sub-link" href="#">
-                          <i class="fa-solid fa-cubes"></i> Products
-                      </a>
+                      @if (Auth::user()->hasPermission('product.read'))
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/products') ? 'active' : '' }}" href="{{ route('products') }}">
+                              <i class="fa-solid fa-cubes"></i> Products
+                          </a>
+                      @endif
 
                       @if (Auth::user()->hasPermission('product_category.read'))
                           <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/categories') ? 'active' : '' }}"
@@ -89,7 +90,8 @@
                               <i class="fa-solid fa-square-plus"></i> Surcharges
                           </a>
 
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/rates') ? 'active' : '' }}" href="{{ route('shippingRates') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/shipping/config/rates') ? 'active' : '' }}"
+                              href="{{ route('shippingRates') }}">
                               <i class="fa-solid fa-calculator"></i> Rates
                           </a>
                       </div>

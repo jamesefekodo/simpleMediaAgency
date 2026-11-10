@@ -2,6 +2,7 @@
 
 namespace App\Models\Shop;
 
+use App\Models\Shop\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -35,8 +36,15 @@ class ProductCategory extends Model
         ];
     }
 
-    // public function categoryProducts()
-    // {
-    //     return $this->hasMany(Product::class, 'category', 'id');
-    // }
+    public function products()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'category_product',
+            'product_category_slug',
+            'product_slug',
+            'slug',
+            'slug'
+        );
+    }
 }

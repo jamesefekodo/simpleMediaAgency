@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop\Brand;
 use App\Models\Shop\Colour;
 use App\Models\Shop\OtherAttribute;
+use App\Models\Shop\Product;
 use App\Models\Shop\ProductCategory;
 use App\Models\Shop\Weight;
-use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 class ShopManagementController extends Controller
@@ -724,5 +726,223 @@ class ShopManagementController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Attribute deleted successfully.');
+    }
+    public function products(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.read'),
+            403
+        );
+
+        $searchKey = trim($request->get('searchKey', ''));
+
+        $products = Product::query()
+            ->with(['brand', 'categories', 'images'])
+            ->when($searchKey, function ($query) use ($searchKey) {
+                $query->where(function ($productQuery) use ($searchKey) {
+                    $productQuery->where('name', 'like', '%' . $searchKey . '%')
+                        ->orWhere('sku', 'like', '%' . $searchKey . '%')
+                        ->orWhere('slug', 'like', '%' . $searchKey . '%')
+                        ->orWhereHas('brand', function ($brandQuery) use ($searchKey) {
+                            $brandQuery->where('brand', 'like', '%' . $searchKey . '%');
+                        })
+                        ->orWhereHas('categories', function ($categoryQuery) use ($searchKey) {
+                            $categoryQuery->where('name', 'like', '%' . $searchKey . '%');
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        $data = [
+            'pageTitle' => 'Products',
+            'products' => $products,
+            'searchKey' => $searchKey,
+            'requestType' => request()->filled('search_key') ? 'search' : 'all',
+        ];
+        return view('users.admin.shop.products.products', compact('data'));
+    }
+    public function newProduct()
+    {
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.create'),
+            403
+        );
+
+        $data = [
+            'pageTitle' => 'Create Product',
+            'brands' => Brand::orderBy('brand')->get(),
+            'categories' => ProductCategory::orderBy('name')->get(),
+            'weights' => Weight::orderBy('min_weight')->get(),
+        ];
+        return view('users.admin.shop.products.createNewProduct', compact('data'));
+    }
+
+    private function validateProduct(Request $request, ?Product $product = null): array
+    {
+        $uniqueSlug = $product ? ',' . $product->slug : '';
+        $uniqueSku = $product ? ',' . $product->sku : '';
+
+        return $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:products,slug' . $uniqueSlug,
+            ],
+            'brand_slug' => ['nullable', 'exists:brands,slug'],
+            'short_description' => ['nullable', 'string', 'max:1000'],
+            'description' => ['nullable', 'string'],
+            'sku' => [
+                'nullable',
+                'string',
+                'max:100',
+                'unique:products,sku' . $uniqueSku,
+            ],
+            'barcode' => ['nullable', 'string', 'max:100'],
+            'type' => ['required', 'in:simple,variable'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'compare_at_price' => ['nullable', 'numeric', 'min:0'],
+            'cost_price' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'size:3'],
+            'track_stock' => ['nullable', 'boolean'],
+            'stock_quantity' => ['nullable', 'integer', 'min:0'],
+            'allow_backorder' => ['nullable', 'boolean'],
+            'low_stock_threshold' => ['nullable', 'integer', 'min:0'],
+            'weight_id' => ['nullable', 'exists:weights,id'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_featured' => ['nullable', 'boolean'],
+            'published_at' => ['nullable', 'date'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:1000'],
+            'category_slugs' => ['nullable', 'array'],
+            'category_slugs.*' => ['exists:product_categories,slug'],
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:300',
+            ],
+        ]);
+    }
+
+    private function productData(Request $request, array $validated, ?Product $product = null): array
+    {
+        return [
+            'brand_slug' => $validated['brand_slug'] ?? null,
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
+            'short_description' => $validated['short_description'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'sku' => $validated['sku'] ?? null,
+            'barcode' => $validated['barcode'] ?? null,
+            'type' => $validated['type'],
+            'price' => $validated['price'] ?? null,
+            'compare_at_price' => $validated['compare_at_price'] ?? null,
+            'cost_price' => $validated['cost_price'] ?? null,
+            'currency' => $validated['currency'],
+            'track_stock' => $request->boolean('track_stock'),
+            'stock_quantity' => $validated['stock_quantity'] ?? 0,
+            'allow_backorder' => $request->boolean('allow_backorder'),
+            'low_stock_threshold' => $validated['low_stock_threshold'] ?? 0,
+            'weight_id' => $validated['weight_id'] ?? null,
+            'is_active' => $request->boolean('is_active'),
+            'is_featured' => $request->boolean('is_featured'),
+            'published_at' => $validated['published_at'] ?? null,
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+        ];
+    }
+
+    private function storeProductImage($image, Product $product, bool $isPrimary = false): void
+    {
+        $path = $image->store('products/' . $product->slug, 'public');
+
+        $product->images()->create([
+            'path' => $path,
+            'alt_text' => $product->name,
+            'position' => $product->images()->count() + 1,
+            'is_primary' => $isPrimary,
+        ]);
+    }
+
+
+    public function addNewProductSubmit(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.create'),
+            403
+        );
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'brand_slug' => ['nullable', 'exists:brands,slug'],
+            'type' => ['required', 'in:simple,variable'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'compare_at_price' => ['nullable', 'numeric', 'min:0'],
+            'cost_price' => ['nullable', 'numeric', 'min:0'],
+            'weight_id' => ['nullable', 'exists:weights,id'],
+            'stock_quantity' => ['nullable', 'integer', 'min:0'],
+            'short_description' => ['nullable', 'string', 'max:1000'],
+            'description' => ['nullable', 'string'],
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:300',
+            ],
+            'category_slugs' => ['nullable', 'array'],
+            'category_slugs.*' => ['exists:product_categories,slug'],
+        ]);
+
+        $product = Product::create([
+            'brand_slug' => $validated['brand_slug'] ?? null,
+            'name' => $validated['name'],
+            'type' => $validated['type'],
+            'price' => $validated['price'] ?? null,
+            'compare_at_price' => $validated['compare_at_price'] ?? null,
+            'cost_price' => $validated['cost_price'] ?? null,
+            'currency' => 'NGN',
+            'weight_id' => $validated['weight_id'] ?? null,
+            'stock_quantity' => $validated['stock_quantity'] ?? 0,
+            'track_stock' => true,
+            'short_description' => $validated['short_description'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'is_active' => $request->boolean('is_active'),
+            'is_featured' => $request->boolean('is_featured'),
+        ]);
+
+        if (! empty($validated['category_slugs'])) {
+            $product->categories()->sync($validated['category_slugs']);
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            $path = $image->store('products/' . $product->slug, 'public');
+
+            $product->images()->create([
+                'path' => $path,
+                'alt_text' => $product->name,
+                'position' => 1,
+                'is_primary' => true,
+            ]);
+        }
+
+        return redirect()
+            ->route('viewProduct', $product->slug)
+            ->with('success', 'Product created successfully.');
     }
 }
