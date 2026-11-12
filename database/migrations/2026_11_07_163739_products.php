@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
 
             $table->string('brand_slug')
@@ -44,6 +44,9 @@ return new class extends Migration
             $table->unsignedInteger('stock_quantity')->default(0);
             $table->boolean('allow_backorder')->default(false);
             $table->unsignedInteger('low_stock_threshold')->default(0);
+
+            $table->decimal('rating_average', 3, 2)->default(0);
+            $table->unsignedInteger('reviews_count')->default(0);
 
             $table->foreignId('weight_id')
                 ->nullable()

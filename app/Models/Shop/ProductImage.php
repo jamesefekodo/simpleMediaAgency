@@ -10,7 +10,7 @@ class ProductImage extends Model
 {
     protected $fillable = [
         'product_slug',
-        'path',
+        'image_file',
         'alt_text',
         'position',
         'is_primary',
@@ -28,7 +28,7 @@ class ProductImage extends Model
 
     public function getUrlAttribute(): string
     {
-        return asset('storage/' . $this->path);
+        return asset('products/' . $this->product_slug . '/' . $this->image_file);
     }
 
     public function getRouteKeyName(): string

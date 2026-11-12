@@ -92,7 +92,7 @@ class Product extends Model
 
     public function images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_slug', 'slug');
     }
 
     public function variants()
@@ -102,7 +102,7 @@ class Product extends Model
 
     public function primaryImage()
     {
-        return $this->hasOne(ProductImage::class)
+        return $this->hasOne(ProductImage::class, 'product_slug', 'slug')
             ->where('is_primary', true)
             ->orderBy('position');
     }
@@ -173,5 +173,18 @@ class Product extends Model
     {
         return $this->hasMany(ProductReview::class, 'product_slug', 'slug')
             ->where('is_approved', true);
+    }
+
+    public function updateRatingSummary(): void
+    {
+        $summary = $this->reviews()
+            ->where('is_approved', true)
+            ->selectRaw('COUNT(*) as total, AVG(rating) as average')
+            ->first();
+
+        $this->update([
+            'reviews_count' => (int) ($summary->total ?? 0),
+            'rating_average' => round((float) ($summary->average ?? 0), 2),
+        ]);
     }
 }

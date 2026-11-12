@@ -21,7 +21,7 @@ return new class extends Migration
                 ->on('products')
                 ->cascadeOnDelete();
 
-            $table->string('path');
+            $table->string('image_file');
             $table->string('alt_text')->nullable();
 
             $table->unsignedInteger('position')->default(0);

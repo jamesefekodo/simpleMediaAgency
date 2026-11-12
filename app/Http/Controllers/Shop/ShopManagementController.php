@@ -931,10 +931,15 @@ class ShopManagementController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
 
-            $path = $image->store('products/' . $product->slug, 'public');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+            $image->move(
+                public_path('products/' . $product->slug),
+                $imageName
+            );
 
             $product->images()->create([
-                'path' => $path,
+                'image_file' => $imageName,
                 'alt_text' => $product->name,
                 'position' => 1,
                 'is_primary' => true,
@@ -944,5 +949,27 @@ class ShopManagementController extends Controller
         return redirect()
             ->route('viewProduct', $product->slug)
             ->with('success', 'Product created successfully.');
+    }
+    public function viewProduct($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.view'),
+            403
+        );
+
+        $product = Product::where('slug', $slug)->with(['brand', 'categories', 'images', 'variants', 'approvedReviews',])->first();
+        if (!$product) {
+            return redirect()->route('productCategories')->with('error', 'Product records not found.');
+        }
+
+
+        $data = [
+            'product' => $product,
+        ];
+
+        return view('users.admin.shop.products.viewProduct', compact('data'));
     }
 }
