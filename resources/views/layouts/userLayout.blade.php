@@ -46,7 +46,21 @@
 <body>
     <div class="admin-shell">
 
-        @include('layouts.include.adminMenu')
+
+
+        @switch(getUserType())
+            @case('admin')
+            @case('staff')
+                @include('layouts.include.adminMenu')
+            @break
+
+            @case('customer')
+                @include('layouts.include.customerMenu')
+            @break
+
+            @default
+        @endswitch
+
         <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
         <main class="admin-main">

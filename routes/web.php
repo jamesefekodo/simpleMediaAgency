@@ -49,9 +49,9 @@ Route::middleware(['authenticationMiddlewares'])->group(function () {
     Route::get('inactive_account', [AuthController::class, 'inactiveAccount'])->name('inactiveAccount');
 });
 
-// members routes
-Route::middleware(['authenticationMiddlewares', 'memberMiddlewares'])->group(function () {
-    Route::get('member/dashboard', [DashboardController::class, 'dashboard'])->name('memberDashboard');
+// customer routes
+Route::middleware(['authenticationMiddlewares', 'customerMiddlewares'])->group(function () {
+    Route::get('customer/dashboard', [DashboardController::class, 'dashboard'])->name('customerDashboard');
 });
 
 // admin routes

@@ -36,7 +36,8 @@
                           <i class="fa-solid fa-truck-fast"></i> Orders
                       </a>
                       @if (Auth::user()->hasPermission('product.read'))
-                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/products') ? 'active' : '' }}" href="{{ route('products') }}">
+                          <a class="nav-sub-link {{ Str::startsWith(request()->path(), 'admin/shop/product/products') ? 'active' : '' }}"
+                              href="{{ route('products') }}">
                               <i class="fa-solid fa-cubes"></i> Products
                           </a>
                       @endif
@@ -209,5 +210,42 @@
                   <span>{{ auth()->user()->email ?? 'admin@example.com' }}</span>
               </div>
           </div>
+
+          <form action="{{ route('logoutRequest') }}" method="POST">
+              @csrf
+
+              <button type="submit" class="sidebar-logout-button">
+                  <i class="fa-solid fa-right-from-bracket"></i> Logout
+              </button>
+          </form>
       </div>
+
+
+      <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              const logoutForm = document.querySelector('.sidebar-footer form');
+
+              if (logoutForm) {
+                  logoutForm.addEventListener('submit', function(event) {
+                      event.preventDefault();
+
+                      Swal.fire({
+                          title: 'Logout?',
+                          text: 'Are you sure you want to logout?',
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonColor: '#d33',
+                          cancelButtonColor: '#6c757d',
+                          confirmButtonText: 'Yes, logout',
+                          cancelButtonText: 'Cancel',
+                          reverseButtons: true
+                      }).then(function(result) {
+                          if (result.isConfirmed) {
+                              logoutForm.submit();
+                          }
+                      });
+                  });
+              }
+          });
+      </script>
   </aside>

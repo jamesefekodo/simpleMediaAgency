@@ -1715,3 +1715,45 @@ textarea.form-input {
     justify-content: center;
     gap: 6px;
 }
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-footer form {
+    margin-top: 15px;
+}
+
+.sidebar-logout-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.sidebar-logout-button i {
+    font-size: 15px;
+}
+
+.sidebar-logout-button:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #f87171;
+}
+
+.sidebar-logout-button:active {
+    transform: scale(0.98);
+}

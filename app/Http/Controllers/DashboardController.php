@@ -14,11 +14,11 @@ class DashboardController extends Controller
 
         if ($user) {
             // 2 members Account
-            if ($user->account_type == 1 && getUserType() === 'customer') {
+            if ($user->account_type == 2 && getUserType() === 'customer') {
                 $data = [
                     'user' => $user,
                 ];
-                return view('users.member.dashboard', compact('data'));
+                return view('users.customer.dashboard', compact('data'));
             }
             // 1 - Admin, 0 - root - 90 odu admin
             if (
