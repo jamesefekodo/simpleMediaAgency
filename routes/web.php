@@ -134,6 +134,11 @@ Route::middleware(['authenticationMiddlewares', 'adminMiddlewares'])->group(func
     Route::get('admin/shop/product/products/add_new', [ShopManagementController::class, 'newProduct'])->name('newProduct');
     Route::post('admin/shop/product/products/create_new/submit', [ShopManagementController::class, 'addNewProductSubmit'])->name('addNewProductSubmit');
     Route::get('admin/shop/product/products/view/{slug}', [ShopManagementController::class, 'viewProduct'])->name('viewProduct');
+    Route::get('admin/shop/product/products/edit/{slug}', [ShopManagementController::class, 'editProduct'])->name('editProduct');
+    Route::put('admin/shop/product/products/edit/{slug}/submit', [ShopManagementController::class, 'updateProductSubmit'])->name('updateProductSubmit');
+    Route::get('admin/shop/product/products/{product}/images/{image}/primary', [ShopManagementController::class, 'setPrimaryProductImage'])->name('setPrimaryProductImage');
+    Route::get('admin/shop/product/products/{product}/images/{image}/delete', [ShopManagementController::class, 'deleteProductImage'])->name('deleteProductImage');
+    Route::get('admin/shop/product/products/{slug}/delete', [ShopManagementController::class, 'deleteProduct'])->name('deleteProduct');
 
 
 

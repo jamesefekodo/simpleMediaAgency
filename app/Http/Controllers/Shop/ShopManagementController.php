@@ -8,6 +8,7 @@ use App\Models\Shop\Colour;
 use App\Models\Shop\OtherAttribute;
 use App\Models\Shop\Product;
 use App\Models\Shop\ProductCategory;
+use App\Models\Shop\ProductImage;
 use App\Models\Shop\Weight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -962,7 +963,7 @@ class ShopManagementController extends Controller
 
         $product = Product::where('slug', $slug)->with(['brand', 'categories', 'images', 'variants', 'approvedReviews',])->first();
         if (!$product) {
-            return redirect()->route('productCategories')->with('error', 'Product records not found.');
+            return redirect()->back()->with('error', 'Product records not found.');
         }
 
 
@@ -971,5 +972,282 @@ class ShopManagementController extends Controller
         ];
 
         return view('users.admin.shop.products.viewProduct', compact('data'));
+    }
+    public function editProduct($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.update'),
+            403
+        );
+        $product = Product::where('slug', $slug)
+            ->with([
+                'brand',
+                'categories',
+                'images',
+            ])
+            ->first();
+
+        if (! $product) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product records not found.');
+        }
+
+        $brands = Brand::orderBy('brand')->get();
+
+        $categories = ProductCategory::orderBy('name')->get();
+
+        $weights = Weight::orderBy('min_weight')->get();
+
+        $selectedCategorySlugs = $product->categories
+            ->pluck('slug')
+            ->toArray();
+
+        $data = [
+            'pageTitle' => 'Update Product',
+            'product' => $product,
+            'brands' => $brands,
+            'categories' => $categories,
+            'weights' => $weights,
+            'selectedCategorySlugs' => $selectedCategorySlugs,
+        ];
+        return view('users.admin.shop.products.editProduct', compact('data'));
+    }
+    public function updateProductSubmit(Request $request, $slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.update'),
+            403
+        );
+
+        $product = Product::where('slug', $slug)->first();
+
+        if (! $product) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product records not found.');
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'brand_slug' => ['nullable', 'exists:brands,slug'],
+            'type' => ['required', 'in:simple,variable'],
+            'sku' => ['nullable', 'string', 'max:100'],
+            'barcode' => ['nullable', 'string', 'max:100'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'compare_at_price' => ['nullable', 'numeric', 'min:0'],
+            'cost_price' => ['nullable', 'numeric', 'min:0'],
+            'weight_id' => ['nullable', 'exists:weights,id'],
+            'stock_quantity' => ['nullable', 'integer', 'min:0'],
+            'short_description' => ['nullable', 'string', 'max:1000'],
+            'description' => ['nullable', 'string'],
+            'new_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:300',
+            ],
+            'category_slugs' => ['nullable', 'array'],
+            'category_slugs.*' => ['exists:product_categories,slug'],
+        ]);
+
+        $product->update([
+            'brand_slug' => $validated['brand_slug'] ?? null,
+            'name' => $validated['name'],
+            'type' => $validated['type'],
+            'sku' => $validated['sku'] ?? null,
+            'barcode' => $validated['barcode'] ?? null,
+            'price' => $validated['price'] ?? null,
+            'compare_at_price' => $validated['compare_at_price'] ?? null,
+            'cost_price' => $validated['cost_price'] ?? null,
+            'currency' => 'NGN',
+            'weight_id' => $validated['weight_id'] ?? null,
+            'stock_quantity' => $validated['stock_quantity'] ?? 0,
+            'track_stock' => true,
+            'short_description' => $validated['short_description'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'is_active' => $request->boolean('is_active'),
+            'is_featured' => $request->boolean('is_featured'),
+        ]);
+
+        $product->categories()->sync($validated['category_slugs'] ?? []);
+
+        if ($request->hasFile('new_image')) {
+            $image = $request->file('new_image');
+
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+            $image->move(
+                public_path('products/' . $product->slug),
+                $imageName
+            );
+
+            $product->images()->create([
+                'image_file' => $imageName,
+                'alt_text' => $product->name,
+                'position' => $product->images()->count() + 1,
+                'is_primary' => $product->images()->count() === 0,
+            ]);
+        }
+
+        return redirect()
+            ->route('viewProduct', $product->slug)
+            ->with('success', 'Product updated successfully.');
+    }
+
+    public function setPrimaryProductImage($productSlug, $imageId)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.update'),
+            403
+        );
+
+        $product = Product::where('slug', $productSlug)->first();
+
+        if (! $product) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product records not found.');
+        }
+
+        $image = ProductImage::where('id', $imageId)
+            ->where('product_slug', $product->slug)
+            ->first();
+
+        if (! $image) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product image not found.');
+        }
+
+        if ($image->is_primary) {
+            return redirect()
+                ->back()
+                ->with('error', 'This image is already the primary product image.');
+        }
+
+        ProductImage::where('product_slug', $product->slug)
+            ->update([
+                'is_primary' => false,
+            ]);
+
+        $image->update([
+            'is_primary' => true,
+        ]);
+
+        return redirect()
+            ->route('editProduct', $product->slug)
+            ->with('success', 'Primary product image updated successfully.');
+    }
+
+    public function deleteProductImage($productSlug, $imageId)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.update'),
+            403
+        );
+
+        $product = Product::where('slug', $productSlug)->first();
+
+        if (! $product) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product records not found.');
+        }
+
+        $image = ProductImage::where('id', $imageId)
+            ->where('product_slug', $product->slug)
+            ->first();
+
+        if (! $image) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product image not found.');
+        }
+
+        if ($image->is_primary) {
+            return redirect()
+                ->back()
+                ->with('error', 'The primary product image cannot be deleted. Set another image as primary first.');
+        }
+
+        $imagePath = public_path('products/' . $product->slug . '/' . $image->image_file);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        $image->delete();
+
+        return redirect()
+            ->route('editProduct', $product->slug)
+            ->with('success', 'Product image deleted successfully.');
+    }
+    public function deleteProduct($slug)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless(
+            $user->hasPermission('product.delete'),
+            403
+        );
+
+        $product = Product::where('slug', $slug)->first();
+
+        if (! $product) {
+            return redirect()
+                ->back()
+                ->with('error', 'Product records not found.');
+        }
+
+        dd('impliment delete block if the item has once been purchased, also add the policy view page');
+
+        DB::transaction(function () use ($product) {
+            // Delete product image files from public folder
+            foreach ($product->images as $image) {
+                $imagePath = public_path(
+                    'products/' . $product->slug . '/' . $image->image_file
+                );
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+
+                $image->delete();
+            }
+
+            // Delete variant attribute-value links
+            foreach ($product->variants as $variant) {
+                $variant->attributeValues()->detach();
+
+                $variant->delete();
+            }
+
+            // Detach product categories
+            $product->categories()->detach();
+
+            // Delete product reviews
+            $product->reviews()->delete();
+
+            // Delete the product
+            $product->delete();
+        });
+
+        return redirect()
+            ->route('products')
+            ->with('success', 'Product and all related records deleted successfully.');
     }
 }

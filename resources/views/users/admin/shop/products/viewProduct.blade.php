@@ -46,13 +46,18 @@
                 </div>
 
                 <div class="product-admin-actions">
-                    <a href="{{ route('editProduct', $data['product']->slug) }}" class="btn-primary-custom">
-                        <i class="fa-solid fa-pen"></i> Update Product
-                    </a>
+                    @if (Auth::user()->hasPermission('product.update'))
+                        <a href="{{ route('editProduct', $data['product']->slug) }}" class="btn-primary-custom">
+                            <i class="fa-solid fa-pen"></i> Update Product
+                        </a>
+                    @endif
 
-                    <button type="button" class="btn-danger-custom delete-product" {{-- data-url="{{ route('deleteProduct', $data['product']->slug) }}" --}}>
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
+                    @if (Auth::user()->hasPermission('product.delete'))
+                        <button type="button" class="btn-danger-custom delete-product"
+                            data-url="{{ route('deleteProduct', $data['product']->slug) }}">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    @endif
                 </div>
             </div>
 
@@ -485,6 +490,16 @@
 
 
     @include('users.admin.shop/products.include.addNewProductImageModal')
+
+    {{-- Back Home --}}
+    <div class="w-100 justify-content-center text-center mb-4">
+        <div class="w-100 justify-content-center text-center mb-4">
+            <a class="btn btn-primary" href="{{ route('products') }}"> <i class="fas fa-chevron-left"></i>
+                Back
+            </a>
+        </div>
+
+    </div>
 
 
 @endsection

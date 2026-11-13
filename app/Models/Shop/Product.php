@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     use HasFactory
-        // , SoftDeletes
+        , SoftDeletes
     ;
 
     protected $fillable = [
